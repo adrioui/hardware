@@ -2,6 +2,7 @@
 """Generate rustlings-style exercise .v files from exercises.json"""
 
 import json, os, textwrap
+from ascii_diagrams import DIAGRAMS
 
 EXERCISES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "exercises")
 
@@ -62,6 +63,21 @@ def generate_exercise(ex):
     if ex['desc']:
         parts.append(wrap_comment(ex['desc']))
     parts.append("//")
+
+    # Diagrams (ASCII art from images)
+    images = ex.get('images', [])
+    if images:
+        seen = set()
+        for img in images:
+            fname = img.get('filename', '')
+            if fname and fname in DIAGRAMS and fname not in seen:
+                seen.add(fname)
+                parts.append(f"// {'─' * 74}")
+                parts.append(f"// DIAGRAM: {fname}")
+                parts.append("//")
+                for line in DIAGRAMS[fname].split('\n'):
+                    parts.append(f"//  {line}")
+                parts.append("//")
 
     # Hint
     if ex.get('hint'):

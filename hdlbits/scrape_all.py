@@ -273,7 +273,7 @@ def fetch(url, retries=1):
 
 def extract(page_html):
     """Extract description, module_decl, starter_code, hint from a page."""
-    result = {"desc": "", "module_decl": "", "starter": "", "hint": ""}
+    result = {"desc": "", "module_decl": "", "starter": "", "hint": "", "images": []}
 
     # ── Description: content between nav-bar and portlistbox/submitbox ──
     # Find the main body content
@@ -287,9 +287,42 @@ def extract(page_html):
         desc_html = re.sub(r'<div style="border-bottom:2px.*?</div>\s*</div>\s*</div>', '', desc_html, flags=re.DOTALL)
         # Remove style blocks
         desc_html = re.sub(r'<style[^>]*>.*?</style>', '', desc_html, flags=re.DOTALL)
-        # Remove image tags but note their alt text
-        desc_html = re.sub(r'<img[^>]*alt="([^"]*)"[^>]*>', r'[Image: \1]', desc_html)
-        desc_html = re.sub(r'<img[^>]*>', '', desc_html)
+        # Extract image info before removing tags
+        result["images"] = []
+        for img_tag in re.finditer(r'<img[^>]*>', desc_html):
+            tag = img_tag.group(0)
+            # Skip logos and skin images
+            if 'skins/' in tag or 'poweredby' in tag or 'logo' in tag:
+                continue
+            src = re.search(r'src="([^"]+)"', tag)
+            if src:
+                img_src = src.group(1)
+                # Resolve to filename
+                if 'thumb.php' in img_src:
+                    fname_m = re.search(r'f=([^&"]+)', img_src)
+                    fname = fname_m.group(1) if fname_m else ''
+                else:
+                    fname = img_src.split('/')[-1]
+                if fname:
+                    full_url = img_src if img_src.startswith('http') else BASE + img_src
+                    result["images"].append({"src": full_url, "filename": fname})
+
+        # Replace image tags with figure markers (using filename)
+        def img_to_marker(m):
+            tag = m.group(0)
+            if 'skins/' in tag or 'poweredby' in tag or 'logo' in tag:
+                return ''
+            src = re.search(r'src="([^"]+)"', tag)
+            if src:
+                img_src = src.group(1)
+                if 'thumb.php' in img_src:
+                    fname_m = re.search(r'f=([^&"]+)', img_src)
+                    fname = fname_m.group(1) if fname_m else 'diagram'
+                else:
+                    fname = img_src.split('/')[-1]
+                return f'[Figure: {fname}]'
+            return ''
+        desc_html = re.sub(r'<img[^>]*>', img_to_marker, desc_html)
         # Remove mw-empty-elt
         desc_html = re.sub(r'<p class="mw-empty-elt">\s*</p>', '', desc_html)
         result["desc"] = decode_html(desc_html)
@@ -317,7 +350,27 @@ def extract(page_html):
     # ── Hint ──
     hint_match = re.search(r'<div class="hb-box" id="hintbox">.*?<div[^>]*>(.*?)</div>', page_html, re.DOTALL)
     if hint_match:
-        result["hint"] = decode_html(hint_match.group(1))
+        hint_html = hint_match.group(1)
+        # Extract images from hint section too
+        for img_tag in re.finditer(r'<img[^>]*>', hint_html):
+            tag = img_tag.group(0)
+            if 'skins/' in tag or 'poweredby' in tag or 'logo' in tag:
+                continue
+            src = re.search(r'src="([^"]+)"', tag)
+            if src:
+                img_src = src.group(1)
+                if 'thumb.php' in img_src:
+                    fname_m = re.search(r'f=([^&"]+)', img_src)
+                    fname = fname_m.group(1) if fname_m else ''
+                else:
+                    fname = img_src.split('/')[-1]
+                if fname:
+                    # Avoid duplicates
+                    existing = {i['filename'] for i in result["images"]}
+                    if fname not in existing:
+                        full_url = img_src if img_src.startswith('http') else BASE + img_src
+                        result["images"].append({"src": full_url, "filename": fname})
+        result["hint"] = decode_html(hint_html)
 
     return result
 
@@ -333,7 +386,7 @@ def main():
 
         page = fetch(url)
         if page is None:
-            data = {"desc": "", "module_decl": "module top_module();", "starter": "", "hint": ""}
+            data = {"desc": "", "module_decl": "module top_module();", "starter": "", "hint": "", "images": []}
         else:
             data = extract(page)
 
