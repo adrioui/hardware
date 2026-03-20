@@ -14,6 +14,7 @@
 // a signal of type `wire`).
 //
 // Example
+// [Figure: Wiredecl1.png]
 //
 // module top_module (
 // input in,              // Declare an input wire named "in"
@@ -51,11 +52,43 @@
 // (Yes, it is possible to create a circuit with the same functionality without
 // the intermediate wires.)
 //
+// [Figure: Wiredecl2.png]
+//
 // **
 // ***Expected solution length:** Around 5 lines.*
 //
 // ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Wiredecl1.png
+//
+//    ┌────────────────────────────────────────────┐
+//    │  top_module                                │
+//    │                                            │
+//    │  in ────────►(wire)────────────────► out   │
+//    │                                            │
+//    │  Declaring intermediate wires:             │
+//    │  wire my_wire;                             │
+//    │  assign my_wire = in;                      │
+//    │  assign out = my_wire;                     │
+//    └────────────────────────────────────────────┘
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Wiredecl2.png
+//
+//    ┌────────────────────────────────────────────────────┐
+//    │  top_module                                        │
+//    │                                                    │
+//    │  a ─────┐      ┌───┐                ┌───┐         │
+//    │         ├─────►│AND├──── wire ──────►│AND├────► out│
+//    │  b ─────┘      └───┘     ab         │   │         │
+//    │  c ─────┐      ┌───┐                │   │         │
+//    │         ├─────►│AND├──── wire ──────►│   │         │
+//    │  d ─────┘      └───┘     cd         └───┘         │
+//    │                                                    │
+//    └────────────────────────────────────────────────────┘
+//
+// ──────────────────────────────────────────────────────────────────────────
 
+// I AM NOT DONE
 
 `default_nettype none
 module top_module(
@@ -64,8 +97,6 @@ module top_module(
     input c,
     input d,
     output out,
-    output out_n   ); 
-    assign out = (a & b) | (c & d);
-    assign out_n = ~((a & b) | (c & d));
-endmodule
+    output out_n   );
 
+endmodule

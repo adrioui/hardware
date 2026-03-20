@@ -94,8 +94,10 @@
 // We want to assign 1 to the output `one`.
 // ──────────────────────────────────────────────────────────────────────────
 
+// I AM NOT DONE
+
 module top_module( output one );
 // Insert your code here
-    assign one = 1;
+    assign one = [fixme];
 
 endmodule
