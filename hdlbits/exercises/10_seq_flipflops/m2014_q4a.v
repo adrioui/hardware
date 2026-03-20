@@ -5,8 +5,24 @@
 //
 // Implement the following circuit:
 //
+// [Figure: Exams_m2014q4a.png]
+//
 // Note that this is a latch, so a Quartus warning about having inferred a
 // latch is expected.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Exams_m2014q4a.png
+//
+//    D Latch (level-sensitive):
+//  
+//          ┌──────┐
+//    d ───►│D    Q├───► q
+//          │      │
+//    ena ─►│EN    │
+//          └──────┘
+//  
+//    When ena=1: q follows d
+//    When ena=0: q holds previous value
 //
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:

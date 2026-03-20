@@ -9,7 +9,17 @@
 // design consists of two instantiations each of subcircuits A and B, as shown
 // below.
 //
+// [Figure: Mt2015_q4.png]
+//
 // Implement this circuit.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Mt2015_q4.png
+//
+//    Top-level circuit using mux-dff submodules:
+//  
+//    (Uses the Mt2015_muxdff submodule)
+//    Three instances of the mux+DFF submodule chained together.
 //
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:

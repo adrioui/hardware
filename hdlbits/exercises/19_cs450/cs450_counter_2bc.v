@@ -8,8 +8,8 @@
 // uses two-bits of state because one-bit of state (remember last outcome) does
 // not have enough hysteresis and flips states too easily.
 //
-// State diagram of a two-bit saturating counter. The four states are
-// **S**trong/**W**eak Taken (**T**)/Not-Taken (**NT**).
+// [Figure: Fsm_2bc.png]State diagram of a two-bit saturating counter. The four
+// states are **S**trong/**W**eak Taken (**T**)/Not-Taken (**NT**).
 //
 // A two-bit state machine that works fairly well is a saturating counter[1],
 // which counts up to 3 (or 2'b11) or down to 0 (or 2'b00) but does not wrap
@@ -35,6 +35,19 @@
 // its value unchanged.
 //
 // `areset` is an asynchronous reset that resets the counter to weakly not-taken (2'b01). Output `state[1:0]` is the two-bit counter value.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Fsm_2bc.png
+//
+//    2-bit counter FSM:
+//  
+//    ┌────┐ +1  ┌────┐ +1  ┌────┐ +1  ┌────┐
+//    │ 00 ├────►│ 01 ├────►│ 10 ├────►│ 11 │
+//    └──┬─┘     └────┘     └────┘     └──┬─┘
+//       ▲                                │ +1
+//       └────────────────────────────────┘
+//  
+//    2-bit saturating counter for branch prediction
 //
 // ──────────────────────────────────────────────────────────────────────────
 

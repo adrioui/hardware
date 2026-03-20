@@ -54,6 +54,16 @@
 // ] }
 //
 // ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Exams_review2015_fsmonehot.png
+//
+//    FSM for review 2015 (one-hot):
+//    (See the HDLBits page for exact state diagram)
+//  
+//    FSM with multiple states, used for both:
+//    - review2015_fsm (complete FSM design)
+//    - review2015_fsmonehot (one-hot logic equations)
+//
+// ──────────────────────────────────────────────────────────────────────────
 
 // I AM NOT DONE
 

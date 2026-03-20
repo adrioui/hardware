@@ -21,6 +21,44 @@
 // See replication operator.). Also connect the `sub` input to the carry-in of
 // the adder.
 //
+// [Figure: Module_addsub.png]
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Module_addsub.png
+//
+//    ┌───────────────────────────────────────────────────────────────┐
+//    │  top_module (Adder-Subtractor)                                │
+//    │                                                               │
+//    │              ┌───────────────────────────────┐                │
+//    │              │  32x XOR gates                │                │
+//    │  b[31:0]════►│  b[i] ^ sub ────────► b_xor  │                │
+//    │  sub ───────►│                               │                │
+//    │              └───────────────┬───────────────┘                │
+//    │                              ║                                │
+//    │              ┌──────────┐    ║    ┌──────────┐                │
+//    │  a[15:0]════►│  add16   │    ║    │  add16   │                │
+//    │  b_xor[15:0]►│a    sum──├═══►║══►│a    sum──├══►sum[31:16]   │
+//    │              │b         │    ║    │b         │                │
+//    │  sub ───────►│cin  cout─├────╨──►│cin       │                │
+//    │              └──────────┘         └──────────┘                │
+//    │              sum[15:0]                                        │
+//    │                                                               │
+//    │  When sub=0: sum = a + b        (add)                         │
+//    │  When sub=1: sum = a + ~b + 1   (subtract, two's complement) │
+//    └───────────────────────────────────────────────────────────────┘
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Module_addsub_xor.png
+//
+//    XOR as programmable inverter:
+//  
+//    b ────►┌─────┐
+//           │ XOR ├────► output
+//    sub ──►└─────┘
+//  
+//    sub=0:  output = b      (pass through)
+//    sub=1:  output = ~b     (invert)
+//
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:
 // An XOR gate can also be viewed as a programmable inverter, where one input

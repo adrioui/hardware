@@ -29,10 +29,11 @@
 // past branch behaviour. There can also be pipeline flushes when there is a
 // mispredicted branch.
 //
-// Branch direction predictor located in the Fetch stage. The branch predictor
-// makes a prediction using the current pc and history register, with the
-// result of the prediction affecting the next pc value. Training and
-// misprediction requests come from later in the pipeline.
+// [Figure: Branch_predictor.png]Branch direction predictor located in the
+// Fetch stage. The branch predictor makes a prediction using the current pc
+// and history register, with the result of the prediction affecting the next
+// pc value. Training and misprediction requests come from later in the
+// pipeline.
 //
 // For this exercise, the branch direction predictor is assumed to sit in the
 // fetch stage of a hypothetical processor pipeline shown in the diagram on the
@@ -135,6 +136,23 @@
 // },}
 //
 // `areset` is an asynchronous reset that clears the entire PHT to 2b'01 (weakly not-taken). It also clears the global history register to 0.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Branch_predictor.png
+//
+//    Gshare branch predictor:
+//  
+//    ┌──────────────────────────────────────────────┐
+//    │  PC ═══►┌──────┐                             │
+//    │         │ XOR  │══► index ═══►┌───────┐      │
+//    │  GHR ══►└──────┘              │  PHT  │      │
+//    │                               │(table)│      │
+//    │         Global History Reg    │ 2-bit │      │
+//    │         (shift register)      │counters│     │
+//    │                               └───┬───┘      │
+//    │                                   │          │
+//    │                            prediction        │
+//    └──────────────────────────────────────────────┘
 //
 // ──────────────────────────────────────────────────────────────────────────
 

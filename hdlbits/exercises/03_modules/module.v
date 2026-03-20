@@ -20,6 +20,7 @@
 // not need to know the code inside the module. The code for module `mod_a`
 // looks like this:
 //
+// [Figure: Module_moda.png]
 // module mod_a ( input in1, input in2, output out );
 // // Module body
 // endmodule
@@ -32,6 +33,8 @@
 //
 // You may connect signals to the module by port name or port position. For
 // extra practice, try both methods.
+//
+// [Figure: Module.png]
 //
 // Connecting Signals to Module Ports
 //
@@ -71,6 +74,28 @@
 //
 // **
 // ***Expected solution length:** Around 1 line.*
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Module_moda.png
+//
+//    ┌────────────────┐
+//    │     mod_a      │
+//    │                │
+//    │  in1 ─►   ─►out│
+//    │  in2 ─►       │
+//    └────────────────┘
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Module.png
+//
+//    ┌─────────────────────────────────────────────────────────┐
+//    │  top_module                                             │
+//    │                    ┌──────────────┐                     │
+//    │                    │    mod_a     │                      │
+//    │  a ───────────────►│in1      out ─├──────────────── out  │
+//    │  b ───────────────►│in2           │                     │
+//    │                    └──────────────┘                     │
+//    └─────────────────────────────────────────────────────────┘
 //
 // ──────────────────────────────────────────────────────────────────────────
 

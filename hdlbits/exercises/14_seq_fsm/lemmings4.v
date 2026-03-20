@@ -3,6 +3,8 @@
 // https://hdlbits.01xz.net/wiki/lemmings4
 // ==========================================================================
 //
+// [Figure: Lemmings4.gif]
+//
 // See also: Lemmings1, Lemmings2, and Lemmings3.
 //
 // Although Lemmings can walk, fall, and dig, Lemmings aren't invulnerable. If
@@ -40,6 +42,37 @@
 // tock:['', '', '',1,2,3, '...', 18, 19, 20, 21, 'oops']
 // }
 // }
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Lemmings4.gif
+//
+//    Lemming animation: walks, digs, falls, and splats.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Lemmings4.png
+//
+//    Lemmings with splat (fall > 20 cycles = death):
+//  
+//    (Extends Lemmings3 FSM)
+//  
+//    FALL states: count falling cycles
+//      If fall_count > 20 when ground=1 → SPLAT
+//      If fall_count <= 20 when ground=1 → resume walking
+//  
+//       ┌───────────┐
+//       │ FALLING   │ count cycles
+//       │ aaah=1    │
+//       └─────┬─────┘
+//             │ ground=1
+//             ▼
+//       count <= 20?  ──yes──► WALK (resume)
+//             │
+//             no
+//             ▼
+//       ┌───────────┐
+//       │  SPLAT    │ all outputs = 0
+//       │  (dead)   │ stays here forever
+//       └───────────┘ (until reset)
 //
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:

@@ -29,6 +29,16 @@
 // tock: ['A', 'A', 'B', '...' ]
 // } }
 //
+// [Figure: Exams_2014q3fsm.png]
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Exams_2014q3fsm.png
+//
+//    FSM diagram (exam 2014 Q3):
+//    (See the HDLBits page for exact state transitions)
+//  
+//    State machine with multiple states and transitions.
+//
 // ──────────────────────────────────────────────────────────────────────────
 
 // I AM NOT DONE

@@ -5,6 +5,8 @@
 //
 // Consider the FSM described by the state diagram shown below:
 //
+// [Figure: Exams_2013q2.png]
+//
 // This FSM acts as an arbiter circuit, which controls access to some type of
 // resource by three
 // requesting devices. Each device makes its request for the resource by
@@ -32,6 +34,14 @@
 // continuous assignment statement(s) or an always block (at your discretion).
 // Assign any state
 // codes that you wish to use.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Exams_2013q2.png
+//
+//    FSM diagram (exam 2013 Q2):
+//    (See the HDLBits page for exact state transitions)
+//  
+//    State machine with multiple states.
 //
 // ──────────────────────────────────────────────────────────────────────────
 

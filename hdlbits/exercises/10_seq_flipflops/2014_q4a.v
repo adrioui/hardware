@@ -5,8 +5,24 @@
 //
 // Consider the *n*-bit shift register circuit shown below:
 //
+// [Figure: Exams_2014q4.png]
+//
 // Write a Verilog module named top_module for one stage of this circuit,
 // including both the flip-flop and multiplexers.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Exams_2014q4.png
+//
+//    Mux + DFF circuit (exam question):
+//  
+//             ┌──────┐   ┌──────┐
+//    d ──────►│ 0    │   │      │
+//             │ MUX  ├──►│D    Q├──┬──► q
+//    ? ──────►│ 1    │   │      │  │
+//             └──┬───┘   │  >   │  │
+//                │       └──┬───┘  │
+//    sel ────────┘          │      │
+//    clk ───────────────────┘      │
 //
 // ──────────────────────────────────────────────────────────────────────────
 

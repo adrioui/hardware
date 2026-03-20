@@ -5,6 +5,8 @@
 //
 // The state diagram for this question is shown again below.
 //
+// [Figure: Exams_2012q2.png]
+//
 // Assume that a one-hot code is used with the state assignment
 // *y[5:0]* = 000001(A), 000010(B), 000100(C), 001000(D), 010000(E), 100000(F)
 //
@@ -17,6 +19,15 @@
 // (Derive the logic equations by inspection assuming a one-hot encoding. The
 // testbench will test with non-one hot inputs to make sure you're not trying
 // to do something more complicated).
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Exams_2012q2.png
+//
+//    FSM diagram (exam 2012 Q2):
+//    (See the HDLBits page for exact state transitions)
+//  
+//    State machine with multiple states.
+//    Used for both Q2a (FSM) and Q2b (one-hot equations).
 //
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:

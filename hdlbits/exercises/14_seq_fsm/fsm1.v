@@ -8,6 +8,28 @@
 //
 // This exercise is the same as fsm1s, but using asynchronous reset.
 //
+// [Figure: Fsm1.png]
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Fsm1.png
+//
+//    Moore FSM (2 states, async reset to B):
+//  
+//                         in=1
+//                  ┌────────────────────┐
+//                  │     in=0           ▼
+//            ┌─────┴─────┐        ┌───────────┐
+//    reset──►│ B (out=1) │◄──────│ A (out=0) │
+//            └───────────┘  in=0  └─────┬─────┘
+//                                       │ in=1
+//                                       └──┐
+//                                          │
+//                                  ┌───────┘
+//                                  ▼
+//                            ┌───────────┐
+//                            │ B (out=1) │
+//                            └───────────┘
+//
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:
 // Yes, there are ways to do this other than writing an FSM. But that wasn't

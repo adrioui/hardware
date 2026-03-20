@@ -28,8 +28,26 @@
 // = ___*`). Being able to think in, and translate between, both styles is one
 // of the most important skills needed for hardware design.
 //
+// [Figure: Ringer.png]
 // **
 // ***Expected solution length:** Around 2 lines.*
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Ringer.png
+//
+//    Phone ringer / vibrate:
+//  
+//    ┌─────────────────────────────────────────┐
+//    │  Inputs:     ring, vibrate_mode         │
+//    │  Outputs:    ringer, motor              │
+//    │                                         │
+//    │  ring=0: ringer=0, motor=0 (off)        │
+//    │  ring=1, vibrate_mode=0: ringer=1       │
+//    │  ring=1, vibrate_mode=1: motor=1        │
+//    │                                         │
+//    │  ringer = ring & ~vibrate_mode           │
+//    │  motor  = ring &  vibrate_mode           │
+//    └─────────────────────────────────────────┘
 //
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:

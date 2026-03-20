@@ -3,6 +3,8 @@
 // https://hdlbits.01xz.net/wiki/lemmings2
 // ==========================================================================
 //
+// [Figure: Lemmings2.gif]
+//
 // See also: Lemmings1.
 //
 // In addition to walking left and right, Lemmings will fall (and presumably go
@@ -27,6 +29,31 @@
 // { name: "aaah",         wave: "0......1...0.." } ] }
 //
 // See also: Lemmings3 and Lemmings4.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Lemmings2.gif
+//
+//    Lemming animation: walks and falls when ground disappears.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Lemmings2.png
+//
+//    Lemmings 4-state FSM (with falling):
+//  
+//       ┌───────────┐  bump   ┌───────────┐
+//       │WALK_LEFT  │◄───────►│WALK_RIGHT │
+//       │walk_left=1│         │walk_left=0│
+//       └─────┬─────┘         └─────┬─────┘
+//             │ ground=0            │ ground=0
+//             ▼                     ▼
+//       ┌───────────┐         ┌───────────┐
+//       │FALL_LEFT  │         │FALL_RIGHT │
+//       │ aaah=1    │         │ aaah=1    │
+//       └─────┬─────┘         └─────┬─────┘
+//             │ ground=1            │ ground=1
+//             ▼                     ▼
+//       WALK_LEFT             WALK_RIGHT
+//    Resume walking in same direction after fall
 //
 // ──────────────────────────────────────────────────────────────────────────
 

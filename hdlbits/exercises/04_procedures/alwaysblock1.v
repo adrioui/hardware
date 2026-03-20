@@ -32,6 +32,8 @@
 // **assign** out1 = a & b | c ^ d;
 // **always @(*)** out2 = a & b | c ^ d;
 //
+// [Figure: Alwayscomb.png]
+//
 // For combinational always blocks, always use a sensitivity list of `(*)`.
 // Explicitly listing out the signals is error-prone (if you miss one), and is
 // ignored for hardware synthesis. If you explicitly specify the sensitivity
@@ -52,6 +54,23 @@
 // block. (Since assign statements and combinational always blocks function
 // identically, there is no way to enforce that you're using both methods. But
 // you're here for practice, right?...)
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Alwayscomb.png
+//
+//    Combinational: assign vs. always @(*)
+//  
+//    ┌───────────────────────────┐    ┌───────────────────────────┐
+//    │  Using assign:            │    │  Using always block:      │
+//    │                           │    │                           │
+//    │  assign out = a & b;      │    │  always @(*) begin        │
+//    │                           │    │      out = a & b;         │
+//    │  a ──►┌─────┐             │    │  end                      │
+//    │       │ AND ├──► out      │    │                           │
+//    │  b ──►└─────┘             │    │  (Same circuit!)          │
+//    └───────────────────────────┘    └───────────────────────────┘
+//  
+//    Both produce identical hardware
 //
 // ──────────────────────────────────────────────────────────────────────────
 

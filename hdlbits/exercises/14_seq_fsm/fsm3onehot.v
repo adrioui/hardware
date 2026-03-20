@@ -49,6 +49,27 @@
 // this topic frequently shows up on exams in digital logic courses.
 //
 // ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Fsm3.png
+//
+//    4-state Moore FSM:
+//  
+//    State transition table:
+//    ┌───────┬──────────────┬────────┐
+//    │ State │  Next state  │ Output │
+//    │       │ in=0 │ in=1  │  out   │
+//    ├───────┼──────┼───────┼────────┤
+//    │   A   │  A   │   B   │   0    │
+//    │   B   │  C   │   B   │   0    │
+//    │   C   │  A   │   D   │   0    │
+//    │   D   │  C   │   B   │   1    │
+//    └───────┴──────┴───────┴────────┘
+//  
+//           in=0    in=1    in=0
+//     ┌──►A ────► B ────► ? ────► ...
+//     │  out=0
+//    reset
+//
+// ──────────────────────────────────────────────────────────────────────────
 // HINT:
 // Logic equations for one-hot state transition logic can be derived by looking
 // at in-edges of the state transition diagram.

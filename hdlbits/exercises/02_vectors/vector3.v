@@ -37,6 +37,25 @@
 // vectors: w, x, y, and z, for 32 bits of output. The output should be a
 // concatenation of the input vectors followed by two `1` bits:
 //
+// [Figure: Vector3.png]
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Vector3.png
+//
+//    Vector concatenation operator { }:
+//  
+//    {5'b11111, 3'b000}           = 8'b11111_000
+//    {1'b1, 1'b0, 3'b101}        = 5'b10_101
+//    {4'ha, 4'd10}               = 8'b1010_1010
+//  
+//    ┌─────────────────────────────────────────────────┐
+//    │  input [15:0] a, b;                             │
+//    │  input [7:0]  c;                                │
+//    │                                                 │
+//    │  {a, b}      = 32-bit concatenation             │
+//    │  {a[7:0], c} = 16-bit concatenation             │
+//    └─────────────────────────────────────────────────┘
+//
 // ──────────────────────────────────────────────────────────────────────────
 
 // I AM NOT DONE

@@ -12,6 +12,7 @@
 // predicted direction is shifted into the shift register. The shift register
 // thus holds the most recent N branch results.
 //
+// [Figure: Branch_history.png]
 // Branch history register with surrounding hardware. This exercise builds the
 // branch history register, inside the blue dashed rectangle.
 //
@@ -62,6 +63,21 @@
 // `predict_history` is the value of the branch history register.
 //
 // `areset` is an asynchronous reset that resets the history counter to zero.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Branch_history.png
+//
+//    Branch history shift register:
+//  
+//    ┌──────────────────────────────────────┐
+//    │  Global History Register             │
+//    │                                      │
+//    │  outcome ──►┌──┬──┬──┬──┬──┬──┬──┐  │
+//    │             │h7│h6│h5│h4│h3│h2│h1│  │
+//    │             └──┴──┴──┴──┴──┴──┴──┘  │
+//    │              shift left on branch    │
+//    │              new outcome enters h1   │
+//    └──────────────────────────────────────┘
 //
 // ──────────────────────────────────────────────────────────────────────────
 

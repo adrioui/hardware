@@ -21,6 +21,27 @@
 // Look at the simulation waveforms at how the bitwise-OR and logical-OR
 // differ.
 //
+// [Figure: Vectorgates.png]
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Vectorgates.png
+//
+//    ┌──────────────────────────────────────────────────────┐
+//    │  Bitwise vs. Logical operations on vectors           │
+//    │                                                      │
+//    │  a[2:0] = 3'b110                                    │
+//    │  b[2:0] = 3'b100                                    │
+//    │                                                      │
+//    │  Bitwise AND:  a & b  = 3'b100  (bit-by-bit)        │
+//    │  Bitwise OR:   a | b  = 3'b110                      │
+//    │  Bitwise XOR:  a ^ b  = 3'b010                      │
+//    │  Bitwise NOT:  ~a     = 3'b001                      │
+//    │                                                      │
+//    │  Logical AND:  a && b = 1'b1    (result is 1 bit)   │
+//    │  Logical OR:   a || b = 1'b1                        │
+//    │  Logical NOT:  !a     = 1'b0                        │
+//    └──────────────────────────────────────────────────────┘
+//
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:
 // Even though you cannot `assign` to a wire more than once, you can use a part

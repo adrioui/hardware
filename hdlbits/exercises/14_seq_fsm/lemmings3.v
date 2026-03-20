@@ -3,6 +3,8 @@
 // https://hdlbits.01xz.net/wiki/lemmings3
 // ==========================================================================
 //
+// [Figure: Lemmings3.gif]
+//
 // See also: Lemmings1 and Lemmings2.
 //
 // In addition to walking and falling, Lemmings can sometimes be told to do
@@ -37,6 +39,37 @@
 // }
 //
 // See also: Lemmings4.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Lemmings3.gif
+//
+//    Lemming animation: walks, digs, and falls.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Lemmings3.png
+//
+//    Lemmings 6-state FSM (with digging):
+//  
+//       ┌───────────┐  bump   ┌───────────┐
+//       │WALK_LEFT  │◄───────►│WALK_RIGHT │
+//       └──┬──┬─────┘         └──┬──┬─────┘
+//          │  │ dig=1             │  │ dig=1
+//    gnd=0│  ▼                   │  ▼
+//          │ ┌──────────┐        │ ┌──────────┐
+//          │ │DIG_LEFT  │        │ │DIG_RIGHT │
+//          │ │digging=1 │        │ │digging=1 │
+//          │ └────┬─────┘        │ └────┬─────┘
+//          │      │gnd=0          │     │gnd=0
+//          ▼      ▼               ▼     ▼
+//       ┌───────────┐         ┌───────────┐
+//       │FALL_LEFT  │         │FALL_RIGHT │
+//       │ aaah=1    │         │ aaah=1    │
+//       └─────┬─────┘         └─────┬─────┘
+//             │ gnd=1               │ gnd=1
+//             ▼                     ▼
+//        WALK_LEFT             WALK_RIGHT
+//  
+//    Priority: fall > dig > switch direction
 //
 // ──────────────────────────────────────────────────────────────────────────
 

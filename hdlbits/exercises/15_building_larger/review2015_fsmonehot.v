@@ -5,6 +5,8 @@
 //
 // Given the following state machine with 3 inputs, 3 outputs, and 10 states:
 //
+// [Figure: Exams_review2015_fsmonehot.png]
+//
 // Derive next-state logic equations and output logic equations *by inspection*
 // assuming the following one-hot encoding is used:
 // `(S, S1, S11, S110, B0, B1, B2, B3, Count, Wait) = (10'b0000000001, 10'b0000000010, 10'b0000000100, ... , 10'b1000000000)`
@@ -34,6 +36,16 @@
 // • counting
 //
 // • shift_ena
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Exams_review2015_fsmonehot.png
+//
+//    FSM for review 2015 (one-hot):
+//    (See the HDLBits page for exact state diagram)
+//  
+//    FSM with multiple states, used for both:
+//    - review2015_fsm (complete FSM design)
+//    - review2015_fsmonehot (one-hot logic equations)
 //
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:

@@ -23,6 +23,23 @@
 // the vector (or "bus"), rather than drawing a separate line for each bit in
 // the vector.
 //
+// [Figure: Vector0.png]
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Vector0.png
+//
+//       3-bit vector:  vec[2:0]
+//  
+//     ┌─────────────────────────────────────────────────┐
+//     │                                                 │
+//     │  vec[0] ─── ┐                                   │
+//     │  vec[1] ─── ├─── vec[2:0] ═══════► (3-bit bus)  │
+//     │  vec[2] ─── ┘                                   │
+//     │                                                 │
+//     │  ═══ indicates a multi-bit bus (vector)         │
+//     │  ─── indicates a single wire                    │
+//     └─────────────────────────────────────────────────┘
+//
 // ──────────────────────────────────────────────────────────────────────────
 
 // I AM NOT DONE

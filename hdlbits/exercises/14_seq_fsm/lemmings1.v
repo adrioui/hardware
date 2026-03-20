@@ -3,6 +3,8 @@
 // https://hdlbits.01xz.net/wiki/lemmings1
 // ==========================================================================
 //
+// [Figure: Lemmings.gif]
+//
 // The game Lemmings involves critters with fairly simple brains. So simple
 // that we are going to model it using a finite state machine.
 //
@@ -22,6 +24,30 @@
 // { name: "walk_right",   wave: "0.....1...01..." } ] }
 //
 // See also: Lemmings2, Lemmings3, and Lemmings4.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Lemmings.gif
+//
+//    Lemming animation: walks left/right, bumps change direction.
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Lemmings1.png
+//
+//    Lemmings 2-state FSM:
+//  
+//                  bump_right
+//             ┌────────────────────────┐
+//             │                        │
+//             ▼      bump_left         │
+//       ┌───────────┐            ┌───────────┐
+//       │WALK_LEFT  │────────────►│WALK_RIGHT │
+//       │walk_left=1│            │walk_left=0│
+//       └───────────┘            └───────────┘
+//             ▲                        │
+//             │      bump_right        │
+//             └────────────────────────┘
+//  
+//    Both bumps at same time → still switch direction
 //
 // ──────────────────────────────────────────────────────────────────────────
 

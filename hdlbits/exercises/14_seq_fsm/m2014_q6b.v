@@ -6,6 +6,8 @@
 // Consider the state machine shown below, which has one input *w* and one
 // output *z*.
 //
+// [Figure: Exams_m2014q6.png]
+//
 // Assume that you wish to implement the FSM using three flip-flops and state
 // codes *y[3:1] =*
 // 000, 001, ... , 101 for states A, B, ... , F, respectively. Show a state-
@@ -14,6 +16,15 @@
 //
 // Implement just the next-state logic for *y[2]*. (This is much more a FSM
 // question than a Verilog coding question. Oh well.)
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Exams_m2014q6.png
+//
+//    FSM state diagram (exam Q6):
+//    (See the HDLBits page for exact state transitions)
+//  
+//    Multiple states with transitions based on w input.
+//    One-hot encoding version also required.
 //
 // ──────────────────────────────────────────────────────────────────────────
 

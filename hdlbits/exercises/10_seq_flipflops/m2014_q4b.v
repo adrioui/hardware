@@ -5,6 +5,21 @@
 //
 // Implement the following circuit:
 //
+// [Figure: Exams_m2014q4b.png]
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Exams_m2014q4b.png
+//
+//    D Flip-Flop (edge-triggered):
+//  
+//          ┌──────┐
+//    d ───►│D    Q├───► q
+//          │      │
+//    clk ─►│>     │
+//          └──────┘
+//  
+//    Captures d on positive edge of clk.
+//
 // ──────────────────────────────────────────────────────────────────────────
 
 // I AM NOT DONE

@@ -6,6 +6,8 @@
 // An `if` statement usually creates a 2-to-1 multiplexer, selecting one input
 // if the condition is true, and the other input if the condition is false.
 //
+// [Figure: Always_if_mux.png]
+//
 // always @(*) begin
 // if (condition) begin
 // out = x;
@@ -35,6 +37,25 @@
 // 01a
 // 10a
 // 11b
+//
+// ──────────────────────────────────────────────────────────────────────────
+// DIAGRAM: Always_if_mux.png
+//
+//    if statement = 2-to-1 multiplexer:
+//  
+//    ┌─────────────────────────────────────────────┐
+//    │                                             │
+//    │         ┌────────┐                          │
+//    │  a ────►│ 1      │                          │
+//    │         │   MUX  ├──────────────────► out   │
+//    │  b ────►│ 0      │                          │
+//    │         └───┬────┘                          │
+//    │             │                               │
+//    │  sel ───────┘                               │
+//    │                                             │
+//    │  if (sel) out = a;                          │
+//    │  else     out = b;                          │
+//    └─────────────────────────────────────────────┘
 //
 // ──────────────────────────────────────────────────────────────────────────
 
