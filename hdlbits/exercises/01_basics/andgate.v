@@ -19,20 +19,8 @@
 // level if there is?), and a wire that has no drivers will have an undefined
 // value (often treated as 0 when synthesizing hardware).
 //
-// [Figure: Andgate.png]
 // **
 // ***Expected solution length:** Around 1 line.*
-//
-// ──────────────────────────────────────────────────────────────────────────
-// DIAGRAM: Andgate.png
-//
-//    ┌──────────────────────────────────────────┐
-//    │  top_module                              │
-//    │                    ┌───┐                 │
-//    │  a ───────────────►│AND├───────────► out │
-//    │  b ───────────────►│   │                 │
-//    │                    └───┘                 │
-//    └──────────────────────────────────────────┘
 //
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:
@@ -41,11 +29,10 @@
 // choose.
 // ──────────────────────────────────────────────────────────────────────────
 
-// I AM NOT DONE
 
 module top_module( 
     input a, 
     input b, 
     output out );
-
+    assign out = a & b;
 endmodule

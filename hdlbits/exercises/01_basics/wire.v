@@ -26,8 +26,6 @@
 // are not your concern, but you should know that your circuit is tested by
 // connecting signals from our test harness to the ports on your `top_module`.
 //
-// [Figure: Wire.png]
-//
 // In addition to continuous assignments, Verilog has three other assignment
 // types that are used in procedural blocks, two of which are synthesizable. We
 // won't be using them until we start using procedural blocks.
@@ -36,24 +34,12 @@
 // ***Expected solution length:** Around 1 line.*
 //
 // ──────────────────────────────────────────────────────────────────────────
-// DIAGRAM: Wire.png
-//
-//    ┌──────────────────────────────────────────┐
-//    │  top_module                              │
-//    │                                          │
-//    │  in ──────────────────────────────── out  │
-//    │           (assign out = in;)             │
-//    │                                          │
-//    └──────────────────────────────────────────┘
-//
-// ──────────────────────────────────────────────────────────────────────────
 // HINT:
 // A *continuous* assignment assigns the right side to the left side
 // *continuously*, so any change to the RHS is immediately seen in the LHS.
 // ──────────────────────────────────────────────────────────────────────────
 
-// I AM NOT DONE
 
 module top_module( input in, output out );
-
+  assign out = in;
 endmodule

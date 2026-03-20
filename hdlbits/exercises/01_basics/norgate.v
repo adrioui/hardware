@@ -14,20 +14,8 @@
 // output is "recomputed" whenever any of its inputs change, forever, much like
 // a simple logic gate.
 //
-// [Figure: Norgate.png]
 // **
 // ***Expected solution length:** Around 1 line.*
-//
-// ──────────────────────────────────────────────────────────────────────────
-// DIAGRAM: Norgate.png
-//
-//    ┌──────────────────────────────────────────┐
-//    │  top_module                              │
-//    │                    ┌───┐                 │
-//    │  a ───────────────►│NOR├──o────────► out │
-//    │  b ───────────────►│   │                 │
-//    │                    └───┘                 │
-//    └──────────────────────────────────────────┘
 //
 // ──────────────────────────────────────────────────────────────────────────
 // HINT:
@@ -36,11 +24,10 @@
 // choose.
 // ──────────────────────────────────────────────────────────────────────────
 
-// I AM NOT DONE
 
 module top_module( 
     input a, 
     input b, 
     output out );
-
+    assign out = !(a | b);
 endmodule
