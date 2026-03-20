@@ -1,0 +1,182 @@
+0|step_one|step_one|00_getting_started|Getting Started|00_getting_started/step_one.v
+1|zero|zero|00_getting_started|Output Zero|00_getting_started/zero.v
+2|wire|wire|01_basics|Simple wire|01_basics/wire.v
+3|wire4|wire4|01_basics|Four wires|01_basics/wire4.v
+4|notgate|notgate|01_basics|Inverter|01_basics/notgate.v
+5|andgate|andgate|01_basics|AND gate|01_basics/andgate.v
+6|norgate|norgate|01_basics|NOR gate|01_basics/norgate.v
+7|xnorgate|xnorgate|01_basics|XNOR gate|01_basics/xnorgate.v
+8|wire_decl|wire_decl|01_basics|Declaring wires|01_basics/wire_decl.v
+9|7458|7458|01_basics|7458 chip|01_basics/7458.v
+10|vector0|vector0|02_vectors|Vectors|02_vectors/vector0.v
+11|vector1|vector1|02_vectors|Vectors in more detail|02_vectors/vector1.v
+12|vector2|vector2|02_vectors|Vector part select|02_vectors/vector2.v
+13|vectorgates|vectorgates|02_vectors|Bitwise operators|02_vectors/vectorgates.v
+14|gates4|gates4|02_vectors|Four-input gates|02_vectors/gates4.v
+15|vector3|vector3|02_vectors|Vector concatenation operator|02_vectors/vector3.v
+16|vectorr|vectorr|02_vectors|Vector reversal 1|02_vectors/vectorr.v
+17|vector4|vector4|02_vectors|Replication operator|02_vectors/vector4.v
+18|vector5|vector5|02_vectors|More replication|02_vectors/vector5.v
+19|module|module|03_modules|Modules|03_modules/module.v
+20|module_pos|module_pos|03_modules|Connecting ports by position|03_modules/module_pos.v
+21|module_name|module_name|03_modules|Connecting ports by name|03_modules/module_name.v
+22|module_shift|module_shift|03_modules|Three modules|03_modules/module_shift.v
+23|module_shift8|module_shift8|03_modules|Modules and vectors|03_modules/module_shift8.v
+24|module_add|module_add|03_modules|Adder 1|03_modules/module_add.v
+25|module_fadd|module_fadd|03_modules|Adder 2|03_modules/module_fadd.v
+26|module_cseladd|module_cseladd|03_modules|Carry-select adder|03_modules/module_cseladd.v
+27|module_addsub|module_addsub|03_modules|Adder-subtractor|03_modules/module_addsub.v
+28|alwaysblock1|alwaysblock1|04_procedures|Always blocks (combinational)|04_procedures/alwaysblock1.v
+29|alwaysblock2|alwaysblock2|04_procedures|Always blocks (clocked)|04_procedures/alwaysblock2.v
+30|always_if|always_if|04_procedures|If statement|04_procedures/always_if.v
+31|always_if2|always_if2|04_procedures|If statement latches|04_procedures/always_if2.v
+32|always_case|always_case|04_procedures|Case statement|04_procedures/always_case.v
+33|always_case2|always_case2|04_procedures|Priority encoder|04_procedures/always_case2.v
+34|always_casez|always_casez|04_procedures|Priority encoder with casez|04_procedures/always_casez.v
+35|always_nolatches|always_nolatches|04_procedures|Avoiding latches|04_procedures/always_nolatches.v
+36|conditional|conditional|05_more_features|Conditional ternary operator|05_more_features/conditional.v
+37|reduction|reduction|05_more_features|Reduction operators|05_more_features/reduction.v
+38|gates100|gates100|05_more_features|Reduction: Even wider gates|05_more_features/gates100.v
+39|vector100r|vector100r|05_more_features|Combinational for-loop: Vector reversal 2|05_more_features/vector100r.v
+40|popcount255|popcount255|05_more_features|Combinational for-loop: 255-bit population count|05_more_features/popcount255.v
+41|adder100i|adder100i|05_more_features|Generate for-loop: 100-bit binary adder 2|05_more_features/adder100i.v
+42|bcdadd100|bcdadd100|05_more_features|Generate for-loop: 100-digit BCD adder|05_more_features/bcdadd100.v
+43|m2014_q4h|exams/m2014_q4h|06_comb_basic_gates|Wire|06_comb_basic_gates/m2014_q4h.v
+44|m2014_q4i|exams/m2014_q4i|06_comb_basic_gates|GND|06_comb_basic_gates/m2014_q4i.v
+45|m2014_q4e|exams/m2014_q4e|06_comb_basic_gates|NOR|06_comb_basic_gates/m2014_q4e.v
+46|m2014_q4f|exams/m2014_q4f|06_comb_basic_gates|Another gate|06_comb_basic_gates/m2014_q4f.v
+47|m2014_q4g|exams/m2014_q4g|06_comb_basic_gates|Two gates|06_comb_basic_gates/m2014_q4g.v
+48|gates|gates|06_comb_basic_gates|More logic gates|06_comb_basic_gates/gates.v
+49|7420|7420|06_comb_basic_gates|7420 chip|06_comb_basic_gates/7420.v
+50|truthtable1|truthtable1|06_comb_basic_gates|Truth tables|06_comb_basic_gates/truthtable1.v
+51|mt2015_eq2|mt2015_eq2|06_comb_basic_gates|Two-bit equality|06_comb_basic_gates/mt2015_eq2.v
+52|mt2015_q4a|mt2015_q4a|06_comb_basic_gates|Simple circuit A|06_comb_basic_gates/mt2015_q4a.v
+53|mt2015_q4b|mt2015_q4b|06_comb_basic_gates|Simple circuit B|06_comb_basic_gates/mt2015_q4b.v
+54|mt2015_q4|mt2015_q4|06_comb_basic_gates|Combine circuits A and B|06_comb_basic_gates/mt2015_q4.v
+55|ringer|ringer|06_comb_basic_gates|Ring or vibrate?|06_comb_basic_gates/ringer.v
+56|thermostat|thermostat|06_comb_basic_gates|Thermostat|06_comb_basic_gates/thermostat.v
+57|popcount3|popcount3|06_comb_basic_gates|3-bit population count|06_comb_basic_gates/popcount3.v
+58|gatesv|gatesv|06_comb_basic_gates|Gates and vectors|06_comb_basic_gates/gatesv.v
+59|gatesv100|gatesv100|06_comb_basic_gates|Even longer vectors|06_comb_basic_gates/gatesv100.v
+60|mux2to1|mux2to1|07_comb_mux|2-to-1 multiplexer|07_comb_mux/mux2to1.v
+61|mux2to1v|mux2to1v|07_comb_mux|2-to-1 bus multiplexer|07_comb_mux/mux2to1v.v
+62|mux9to1v|mux9to1v|07_comb_mux|9-to-1 multiplexer|07_comb_mux/mux9to1v.v
+63|mux256to1|mux256to1|07_comb_mux|256-to-1 multiplexer|07_comb_mux/mux256to1.v
+64|mux256to1v|mux256to1v|07_comb_mux|256-to-1 4-bit multiplexer|07_comb_mux/mux256to1v.v
+65|hadd|hadd|08_comb_arith|Half adder|08_comb_arith/hadd.v
+66|fadd|fadd|08_comb_arith|Full adder|08_comb_arith/fadd.v
+67|adder3|adder3|08_comb_arith|3-bit binary adder|08_comb_arith/adder3.v
+68|m2014_q4j|exams/m2014_q4j|08_comb_arith|Adder|08_comb_arith/m2014_q4j.v
+69|ece241_2014_q1c|exams/ece241_2014_q1c|08_comb_arith|Signed addition overflow|08_comb_arith/ece241_2014_q1c.v
+70|adder100|adder100|08_comb_arith|100-bit binary adder|08_comb_arith/adder100.v
+71|bcdadd4|bcdadd4|08_comb_arith|4-digit BCD adder|08_comb_arith/bcdadd4.v
+72|kmap1|kmap1|09_comb_karnaugh|3-variable|09_comb_karnaugh/kmap1.v
+73|kmap2|kmap2|09_comb_karnaugh|4-variable|09_comb_karnaugh/kmap2.v
+74|kmap3|kmap3|09_comb_karnaugh|4-variable (2)|09_comb_karnaugh/kmap3.v
+75|kmap4|kmap4|09_comb_karnaugh|4-variable (3)|09_comb_karnaugh/kmap4.v
+76|ece241_2013_q2|exams/ece241_2013_q2|09_comb_karnaugh|Minimum SOP and POS|09_comb_karnaugh/ece241_2013_q2.v
+77|m2014_q3|exams/m2014_q3|09_comb_karnaugh|Karnaugh map|09_comb_karnaugh/m2014_q3.v
+78|2012_q1g|exams/2012_q1g|09_comb_karnaugh|Karnaugh map (2)|09_comb_karnaugh/2012_q1g.v
+79|ece241_2014_q3|exams/ece241_2014_q3|09_comb_karnaugh|K-map implemented with a multiplexer|09_comb_karnaugh/ece241_2014_q3.v
+80|dff|dff|10_seq_flipflops|D flip-flop|10_seq_flipflops/dff.v
+81|dff8|dff8|10_seq_flipflops|D flip-flops|10_seq_flipflops/dff8.v
+82|dff8r|dff8r|10_seq_flipflops|DFF with reset|10_seq_flipflops/dff8r.v
+83|dff8p|dff8p|10_seq_flipflops|DFF with reset value|10_seq_flipflops/dff8p.v
+84|dff8ar|dff8ar|10_seq_flipflops|DFF with asynchronous reset|10_seq_flipflops/dff8ar.v
+85|dff16e|dff16e|10_seq_flipflops|DFF with byte enable|10_seq_flipflops/dff16e.v
+86|m2014_q4a|exams/m2014_q4a|10_seq_flipflops|D Latch|10_seq_flipflops/m2014_q4a.v
+87|m2014_q4b|exams/m2014_q4b|10_seq_flipflops|DFF (exam)|10_seq_flipflops/m2014_q4b.v
+88|m2014_q4c|exams/m2014_q4c|10_seq_flipflops|DFF (exam 2)|10_seq_flipflops/m2014_q4c.v
+89|m2014_q4d|exams/m2014_q4d|10_seq_flipflops|DFF+gate|10_seq_flipflops/m2014_q4d.v
+90|mt2015_muxdff|mt2015_muxdff|10_seq_flipflops|Mux and DFF|10_seq_flipflops/mt2015_muxdff.v
+91|2014_q4a|exams/2014_q4a|10_seq_flipflops|Mux and DFF (exam)|10_seq_flipflops/2014_q4a.v
+92|ece241_2014_q4|exams/ece241_2014_q4|10_seq_flipflops|DFFs and gates|10_seq_flipflops/ece241_2014_q4.v
+93|ece241_2013_q7|exams/ece241_2013_q7|10_seq_flipflops|Create circuit from truth table|10_seq_flipflops/ece241_2013_q7.v
+94|edgedetect|edgedetect|10_seq_flipflops|Detect an edge|10_seq_flipflops/edgedetect.v
+95|edgedetect2|edgedetect2|10_seq_flipflops|Detect both edges|10_seq_flipflops/edgedetect2.v
+96|edgecapture|edgecapture|10_seq_flipflops|Edge capture register|10_seq_flipflops/edgecapture.v
+97|dualedge|dualedge|10_seq_flipflops|Dual-edge triggered flip-flop|10_seq_flipflops/dualedge.v
+98|count15|count15|11_seq_counters|Four-bit binary counter|11_seq_counters/count15.v
+99|count10|count10|11_seq_counters|Decade counter|11_seq_counters/count10.v
+100|count1to10|count1to10|11_seq_counters|Decade counter again|11_seq_counters/count1to10.v
+101|countslow|countslow|11_seq_counters|Slow decade counter|11_seq_counters/countslow.v
+102|ece241_2014_q7a|exams/ece241_2014_q7a|11_seq_counters|Counter 1-12|11_seq_counters/ece241_2014_q7a.v
+103|ece241_2014_q7b|exams/ece241_2014_q7b|11_seq_counters|Counter 1000|11_seq_counters/ece241_2014_q7b.v
+104|countbcd|countbcd|11_seq_counters|4-digit decimal counter|11_seq_counters/countbcd.v
+105|count_clock|count_clock|11_seq_counters|12-hour clock|11_seq_counters/count_clock.v
+106|shift4|shift4|12_seq_shift_reg|4-bit shift register|12_seq_shift_reg/shift4.v
+107|rotate100|rotate100|12_seq_shift_reg|Left/right rotator|12_seq_shift_reg/rotate100.v
+108|shift18|shift18|12_seq_shift_reg|Left/right arithmetic shift by 1 or 8|12_seq_shift_reg/shift18.v
+109|lfsr5|lfsr5|12_seq_shift_reg|5-bit LFSR|12_seq_shift_reg/lfsr5.v
+110|mt2015_lfsr|mt2015_lfsr|12_seq_shift_reg|3-bit LFSR|12_seq_shift_reg/mt2015_lfsr.v
+111|lfsr32|lfsr32|12_seq_shift_reg|32-bit LFSR|12_seq_shift_reg/lfsr32.v
+112|m2014_q4k|exams/m2014_q4k|12_seq_shift_reg|Shift register|12_seq_shift_reg/m2014_q4k.v
+113|2014_q4b|exams/2014_q4b|12_seq_shift_reg|Shift register (exam)|12_seq_shift_reg/2014_q4b.v
+114|ece241_2013_q12|exams/ece241_2013_q12|12_seq_shift_reg|3-input LUT|12_seq_shift_reg/ece241_2013_q12.v
+115|rule90|rule90|13_seq_more|Rule 90|13_seq_more/rule90.v
+116|rule110|rule110|13_seq_more|Rule 110|13_seq_more/rule110.v
+117|conwaylife|conwaylife|13_seq_more|Conway's Game of Life 16x16|13_seq_more/conwaylife.v
+118|fsm1|fsm1|14_seq_fsm|Simple FSM 1 (asynchronous reset)|14_seq_fsm/fsm1.v
+119|fsm1s|fsm1s|14_seq_fsm|Simple FSM 1 (synchronous reset)|14_seq_fsm/fsm1s.v
+120|fsm2|fsm2|14_seq_fsm|Simple FSM 2 (asynchronous reset)|14_seq_fsm/fsm2.v
+121|fsm2s|fsm2s|14_seq_fsm|Simple FSM 2 (synchronous reset)|14_seq_fsm/fsm2s.v
+122|fsm3comb|fsm3comb|14_seq_fsm|Simple state transitions 3|14_seq_fsm/fsm3comb.v
+123|fsm3onehot|fsm3onehot|14_seq_fsm|Simple one-hot state transitions 3|14_seq_fsm/fsm3onehot.v
+124|fsm3|fsm3|14_seq_fsm|Simple FSM 3 (asynchronous reset)|14_seq_fsm/fsm3.v
+125|fsm3s|fsm3s|14_seq_fsm|Simple FSM 3 (synchronous reset)|14_seq_fsm/fsm3s.v
+126|ece241_2013_q4|exams/ece241_2013_q4|14_seq_fsm|Design a Moore FSM|14_seq_fsm/ece241_2013_q4.v
+127|lemmings1|lemmings1|14_seq_fsm|Lemmings 1|14_seq_fsm/lemmings1.v
+128|lemmings2|lemmings2|14_seq_fsm|Lemmings 2|14_seq_fsm/lemmings2.v
+129|lemmings3|lemmings3|14_seq_fsm|Lemmings 3|14_seq_fsm/lemmings3.v
+130|lemmings4|lemmings4|14_seq_fsm|Lemmings 4|14_seq_fsm/lemmings4.v
+131|fsm_onehot|fsm_onehot|14_seq_fsm|One-hot FSM|14_seq_fsm/fsm_onehot.v
+132|fsm_ps2|fsm_ps2|14_seq_fsm|PS/2 packet parser|14_seq_fsm/fsm_ps2.v
+133|fsm_ps2data|fsm_ps2data|14_seq_fsm|PS/2 packet parser and datapath|14_seq_fsm/fsm_ps2data.v
+134|fsm_serial|fsm_serial|14_seq_fsm|Serial receiver|14_seq_fsm/fsm_serial.v
+135|fsm_serialdata|fsm_serialdata|14_seq_fsm|Serial receiver and datapath|14_seq_fsm/fsm_serialdata.v
+136|fsm_serialdp|fsm_serialdp|14_seq_fsm|Serial receiver with parity checking|14_seq_fsm/fsm_serialdp.v
+137|fsm_hdlc|fsm_hdlc|14_seq_fsm|Sequence recognition|14_seq_fsm/fsm_hdlc.v
+138|ece241_2013_q8|exams/ece241_2013_q8|14_seq_fsm|Q8: Design a Mealy FSM|14_seq_fsm/ece241_2013_q8.v
+139|ece241_2014_q5a|exams/ece241_2014_q5a|14_seq_fsm|Q5a: Serial two's complementer (Moore FSM)|14_seq_fsm/ece241_2014_q5a.v
+140|ece241_2014_q5b|exams/ece241_2014_q5b|14_seq_fsm|Q5b: Serial two's complementer (Mealy FSM)|14_seq_fsm/ece241_2014_q5b.v
+141|2014_q3fsm|exams/2014_q3fsm|14_seq_fsm|Q3a: FSM|14_seq_fsm/2014_q3fsm.v
+142|2014_q3bfsm|exams/2014_q3bfsm|14_seq_fsm|Q3b: FSM|14_seq_fsm/2014_q3bfsm.v
+143|2014_q3c|exams/2014_q3c|14_seq_fsm|Q3c: FSM logic|14_seq_fsm/2014_q3c.v
+144|m2014_q6b|exams/m2014_q6b|14_seq_fsm|Q6b: FSM next-state logic|14_seq_fsm/m2014_q6b.v
+145|m2014_q6c|exams/m2014_q6c|14_seq_fsm|Q6c: FSM one-hot next-state logic|14_seq_fsm/m2014_q6c.v
+146|m2014_q6|exams/m2014_q6|14_seq_fsm|Q6: FSM|14_seq_fsm/m2014_q6.v
+147|2012_q2fsm|exams/2012_q2fsm|14_seq_fsm|Q2a: FSM|14_seq_fsm/2012_q2fsm.v
+148|2012_q2b|exams/2012_q2b|14_seq_fsm|Q2b: One-hot FSM equations|14_seq_fsm/2012_q2b.v
+149|2013_q2afsm|exams/2013_q2afsm|14_seq_fsm|Q2a: FSM (2013)|14_seq_fsm/2013_q2afsm.v
+150|2013_q2bfsm|exams/2013_q2bfsm|14_seq_fsm|Q2b: Another FSM|14_seq_fsm/2013_q2bfsm.v
+151|review2015_count1k|exams/review2015_count1k|15_building_larger|Counter with period 1000|15_building_larger/review2015_count1k.v
+152|review2015_shiftcount|exams/review2015_shiftcount|15_building_larger|4-bit shift register and down counter|15_building_larger/review2015_shiftcount.v
+153|review2015_fsmseq|exams/review2015_fsmseq|15_building_larger|FSM: Sequence 1101 recognizer|15_building_larger/review2015_fsmseq.v
+154|review2015_fsmshift|exams/review2015_fsmshift|15_building_larger|FSM: Enable shift register|15_building_larger/review2015_fsmshift.v
+155|review2015_fsm|exams/review2015_fsm|15_building_larger|FSM: The complete FSM|15_building_larger/review2015_fsm.v
+156|review2015_fancytimer|exams/review2015_fancytimer|15_building_larger|The complete timer|15_building_larger/review2015_fancytimer.v
+157|review2015_fsmonehot|exams/review2015_fsmonehot|15_building_larger|FSM: One-hot logic equations|15_building_larger/review2015_fsmonehot.v
+158|bugs_mux2|bugs_mux2|16_bugs|Mux|16_bugs/bugs_mux2.v
+159|bugs_nand3|bugs_nand3|16_bugs|NAND|16_bugs/bugs_nand3.v
+160|bugs_mux4|bugs_mux4|16_bugs|Mux (4-to-1)|16_bugs/bugs_mux4.v
+161|bugs_addsubz|bugs_addsubz|16_bugs|Add/sub|16_bugs/bugs_addsubz.v
+162|bugs_case|bugs_case|16_bugs|Case statement|16_bugs/bugs_case.v
+163|sim_circuit1|sim/circuit1|17_sim_waveforms|Combinational circuit 1|17_sim_waveforms/sim_circuit1.v
+164|sim_circuit2|sim/circuit2|17_sim_waveforms|Combinational circuit 2|17_sim_waveforms/sim_circuit2.v
+165|sim_circuit3|sim/circuit3|17_sim_waveforms|Combinational circuit 3|17_sim_waveforms/sim_circuit3.v
+166|sim_circuit4|sim/circuit4|17_sim_waveforms|Combinational circuit 4|17_sim_waveforms/sim_circuit4.v
+167|sim_circuit5|sim/circuit5|17_sim_waveforms|Combinational circuit 5|17_sim_waveforms/sim_circuit5.v
+168|sim_circuit6|sim/circuit6|17_sim_waveforms|Combinational circuit 6|17_sim_waveforms/sim_circuit6.v
+169|sim_circuit7|sim/circuit7|17_sim_waveforms|Sequential circuit 7|17_sim_waveforms/sim_circuit7.v
+170|sim_circuit8|sim/circuit8|17_sim_waveforms|Sequential circuit 8|17_sim_waveforms/sim_circuit8.v
+171|sim_circuit9|sim/circuit9|17_sim_waveforms|Sequential circuit 9|17_sim_waveforms/sim_circuit9.v
+172|sim_circuit10|sim/circuit10|17_sim_waveforms|Sequential circuit 10|17_sim_waveforms/sim_circuit10.v
+173|tb_clock|tb/clock|18_testbenches|Clock|18_testbenches/tb_clock.v
+174|tb_tb1|tb/tb1|18_testbenches|Testbench1|18_testbenches/tb_tb1.v
+175|tb_and|tb/and|18_testbenches|AND gate|18_testbenches/tb_and.v
+176|tb_tb2|tb/tb2|18_testbenches|Testbench2|18_testbenches/tb_tb2.v
+177|tb_tff|tb/tff|18_testbenches|T flip-flop|18_testbenches/tb_tff.v
+178|cs450_timer|cs450/timer|19_cs450|Timer|19_cs450/cs450_timer.v
+179|cs450_counter_2bc|cs450/counter_2bc|19_cs450|2-bit counter|19_cs450/cs450_counter_2bc.v
+180|cs450_history_shift|cs450/history_shift|19_cs450|History shift register|19_cs450/cs450_history_shift.v
+181|cs450_gshare|cs450/gshare|19_cs450|Gshare branch predictor|19_cs450/cs450_gshare.v

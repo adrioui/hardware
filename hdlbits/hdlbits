@@ -1,0 +1,525 @@
+#!/usr/bin/env bash
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║  hdlbits — rustlings-style Verilog practice from the terminal  ║
+# ║  Graded remotely via the HDLBits Quartus+ModelSim toolchain    ║
+# ╚══════════════════════════════════════════════════════════════════╝
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+EXERCISES_DIR="$SCRIPT_DIR/exercises"
+COOKIE_FILE="$SCRIPT_DIR/.cookies"
+MANIFEST="$SCRIPT_DIR/.manifest"
+CATEGORIES="$SCRIPT_DIR/.categories"
+BASE_URL="https://hdlbits.01xz.net"
+
+# ── Colors ──────────────────────────────────────────────────────────
+R='\033[0;31m';  G='\033[0;32m';  Y='\033[0;33m'
+B='\033[0;34m';  M='\033[0;35m';  C='\033[0;36m'
+BO='\033[1m';    DI='\033[2m';    RS='\033[0m'
+
+die()  { printf "${R}error:${RS} %s\n" "$*" >&2; exit 1; }
+info() { printf "${C}›${RS} %s\n" "$*"; }
+ok()   { printf "${G}✓${RS} %s\n" "$*"; }
+warn() { printf "${Y}⚠${RS} %s\n" "$*"; }
+
+# ── Manifest helpers ────────────────────────────────────────────────
+# Format: index|slug|tc|category|title|relpath
+
+manifest_get() {
+    # $1 = slug → print full manifest line
+    grep "^[0-9]*|${1}|" "$MANIFEST" | head -1 || true
+}
+
+manifest_field() {
+    # $1 = line, $2 = field (0-indexed)
+    echo "$1" | cut -d'|' -f$(($2 + 1))
+}
+
+slug_to_file() {
+    local line; line=$(manifest_get "$1")
+    [[ -z "$line" ]] && return 1
+    local relpath; relpath=$(manifest_field "$line" 5)
+    echo "$EXERCISES_DIR/$relpath"
+}
+
+slug_to_tc() {
+    local line; line=$(manifest_get "$1")
+    [[ -z "$line" ]] && return 1
+    manifest_field "$line" 2
+}
+
+cat_pretty() {
+    local r
+    r=$(grep "^${1}|" "$CATEGORIES" 2>/dev/null | cut -d'|' -f2 || true)
+    echo "${r:-$1}"
+}
+
+# ── HDLBits API ─────────────────────────────────────────────────────
+
+ensure_session() {
+    if [[ ! -f "$COOKIE_FILE" ]] || ! grep -q vlgsession "$COOKIE_FILE" 2>/dev/null; then
+        curl -sL -c "$COOKIE_FILE" "$BASE_URL/wiki/Main_Page" > /dev/null 2>&1
+    fi
+    if ! grep -q vlgsession "$COOKIE_FILE" 2>/dev/null; then
+        die "Failed to get session"
+    fi
+}
+
+# Submit code and parse result. Sets global STATUS and OUTPUT.
+STATUS="" OUTPUT=""
+submit_code() {
+    local tc="$1" code="$2"
+    ensure_session
+
+    local response
+    response=$(curl -sL \
+        -b "$COOKIE_FILE" -c "$COOKIE_FILE" \
+        -X POST "$BASE_URL/runsim.php" \
+        --data-urlencode "vlgcode_box=$code" \
+        --data-urlencode "tc=$tc" \
+        --max-time 120 \
+        2>&1) || { STATUS="Network Error"; OUTPUT="curl failed"; return 1; }
+
+    STATUS=$(echo "$response" | grep -oP '(?<=<h2>Status: ).*?(?=</h2>)' | head -1 || true)
+    [[ -z "$STATUS" ]] && STATUS="Unknown"
+
+    # Build clean output
+    local out=""
+
+    # Errors
+    local errors
+    errors=$(echo "$response" | grep 'class="msg_error"' \
+        | sed 's/<[^>]*>//g; s/^[[:space:]]*//' \
+        | grep -v '^Error: Quartus' | grep -v '^Error: Peak' \
+        | grep -v 'Processing ended' | grep -v 'Elapsed time' \
+        | grep -v 'Total CPU time' | grep -v 'unsuccessful' \
+        | head -15 || true)
+    [[ -n "$errors" ]] && out+="$errors"$'\n'
+
+    # Hints (mismatch info)
+    local hints
+    hints=$(echo "$response" | grep 'class="msg_hint"' \
+        | sed 's/<[^>]*>//g; s/^[[:space:]]*//' | head -10 || true)
+    [[ -n "$hints" ]] && out+="$hints"$'\n'
+
+    # Warnings (brief)
+    local warns
+    warns=$(echo "$response" | grep 'class="msg_warn"' \
+        | sed 's/<[^>]*>//g; s/^[[:space:]]*//' | head -3 || true)
+    [[ -n "$warns" ]] && out+="$warns"$'\n'
+
+    OUTPUT="$out"
+}
+
+# ── File helpers ────────────────────────────────────────────────────
+
+is_done() {
+    # An exercise is "done" when "// I AM NOT DONE" is removed
+    local file="$1"
+    ! grep -q '// I AM NOT DONE' "$file" 2>/dev/null
+}
+
+strip_comments() {
+    # Return just the code (no leading // comment block) for submission
+    # We submit the ENTIRE file — HDLBits ignores comments
+    cat "$1"
+}
+
+# ── Print result ────────────────────────────────────────────────────
+
+print_result() {
+    local slug="$1"
+    echo ""
+    case "$STATUS" in
+        "Success!")
+            printf "  ${G}${BO}━━━ ✅ SUCCESS — %s ━━━${RS}\n" "$slug"
+            ;;
+        "Compile Error")
+            printf "  ${R}${BO}━━━ ❌ COMPILE ERROR — %s ━━━${RS}\n" "$slug"
+            ;;
+        "Incorrect")
+            printf "  ${R}${BO}━━━ ❌ INCORRECT — %s ━━━${RS}\n" "$slug"
+            ;;
+        *)
+            printf "  ${Y}${BO}━━━ ⚠ %s — %s ━━━${RS}\n" "$STATUS" "$slug"
+            ;;
+    esac
+
+    if [[ -n "$OUTPUT" ]]; then
+        echo ""
+        echo "$OUTPUT" | while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            if echo "$line" | grep -qi 'error'; then
+                printf "  ${R}%s${RS}\n" "$line"
+            elif echo "$line" | grep -qi 'hint\|mismatch'; then
+                printf "  ${DI}%s${RS}\n" "$line"
+            else
+                printf "  ${Y}%s${RS}\n" "$line"
+            fi
+        done
+    fi
+    echo ""
+}
+
+# ── Commands ────────────────────────────────────────────────────────
+
+cmd_list() {
+    local filter="${1:-}"
+    local current_cat=""
+    local total=0 done=0 not_done=0
+
+    echo ""
+    printf "${BO}  HDLBits — 182 Verilog Exercises${RS}\n"
+    echo ""
+
+    while IFS='|' read -r idx slug tc cat title relpath; do
+        local file="$EXERCISES_DIR/$relpath"
+        local mark
+        if is_done "$file"; then
+            mark="${G}✓${RS}"
+            ((done++)) || true
+        else
+            mark="${DI}○${RS}"
+            ((not_done++)) || true
+        fi
+        ((total++)) || true
+
+        # Filter
+        if [[ -n "$filter" ]]; then
+            if ! echo "$cat $slug $title" | grep -qi "$filter"; then
+                continue
+            fi
+        fi
+
+        # Category header
+        if [[ "$cat" != "$current_cat" ]]; then
+            current_cat="$cat"
+            local pretty; pretty=$(cat_pretty "$cat")
+            printf "\n  ${M}${BO}%s${RS}\n" "$pretty"
+        fi
+
+        printf "    %b  ${BO}%-28s${RS} ${DI}%s${RS}\n" "$mark" "$slug" "$title"
+    done < "$MANIFEST"
+
+    echo ""
+    printf "  ${DI}Progress: %d/%d done${RS}\n\n" "$done" "$total"
+}
+
+cmd_run() {
+    local slug="$1"
+    local file; file=$(slug_to_file "$slug") || die "Unknown exercise: $slug"
+    local tc; tc=$(slug_to_tc "$slug")
+
+    [[ -f "$file" ]] || die "File not found: $file"
+    local code; code=$(cat "$file")
+    [[ -n "$code" ]] || die "File is empty: $file"
+
+    printf "${C}›${RS} Compiling & simulating ${BO}%s${RS}...\n" "$slug"
+    printf "${DI}  (Quartus synthesis → ModelSim simulation)${RS}\n"
+
+    submit_code "$tc" "$code"
+    print_result "$slug"
+
+    [[ "$STATUS" == "Success!" ]] && return 0 || return 1
+}
+
+cmd_hint() {
+    local slug="$1"
+    local file; file=$(slug_to_file "$slug") || die "Unknown exercise: $slug"
+
+    # Extract HINT from comments
+    local in_hint=0
+    local hint=""
+    while IFS= read -r line; do
+        if [[ "$line" == "// HINT:" ]]; then
+            in_hint=1
+            continue
+        fi
+        if [[ $in_hint -eq 1 ]]; then
+            if [[ "$line" =~ ^//\ ─ ]]; then
+                break
+            fi
+            hint+="${line#// }"$'\n'
+        fi
+    done < "$file"
+
+    if [[ -n "$hint" ]]; then
+        echo ""
+        printf "  ${Y}${BO}Hint for %s:${RS}\n\n" "$slug"
+        echo "$hint" | while IFS= read -r line; do
+            printf "  ${DI}%s${RS}\n" "$line"
+        done
+        echo ""
+    else
+        warn "No hint available for $slug"
+    fi
+}
+
+cmd_next() {
+    while IFS='|' read -r idx slug tc cat title relpath; do
+        local file="$EXERCISES_DIR/$relpath"
+        if ! is_done "$file"; then
+            echo ""
+            local pretty; pretty=$(cat_pretty "$cat")
+            printf "  ${C}Next exercise:${RS} ${BO}%s${RS} ${DI}(%s)${RS}\n" "$slug" "$pretty"
+            printf "  ${DI}%s${RS}\n" "$title"
+            printf "  ${DI}%s${RS}\n\n" "$file"
+            printf "  ${DI}Open the file, read the problem in the comments,${RS}\n"
+            printf "  ${DI}write your solution, then run:${RS}\n\n"
+            printf "    ${BO}hdlbits run %s${RS}\n\n" "$slug"
+            printf "  ${DI}When it passes, remove the '// I AM NOT DONE' line${RS}\n"
+            printf "  ${DI}to mark it complete and move to the next exercise.${RS}\n\n"
+            return 0
+        fi
+    done < "$MANIFEST"
+
+    echo ""
+    printf "  ${G}${BO}🎉 All exercises completed!${RS}\n\n"
+}
+
+cmd_verify() {
+    # Run all exercises that are marked done and check they still pass
+    local total=0 pass=0 fail=0 skip=0
+
+    printf "\n${BO}  Verifying all completed exercises...${RS}\n\n"
+
+    while IFS='|' read -r idx slug tc cat title relpath; do
+        local file="$EXERCISES_DIR/$relpath"
+        if ! is_done "$file"; then
+            ((skip++)) || true
+            continue
+        fi
+        ((total++)) || true
+        printf "  ${DI}[%d] %s...${RS} " "$total" "$slug"
+
+        local code; code=$(cat "$file")
+        submit_code "$tc" "$code"
+
+        if [[ "$STATUS" == "Success!" ]]; then
+            printf "${G}✓${RS}\n"
+            ((pass++)) || true
+        else
+            printf "${R}✗ (%s)${RS}\n" "$STATUS"
+            ((fail++)) || true
+        fi
+        sleep 0.3
+    done < "$MANIFEST"
+
+    echo ""
+    printf "  ${BO}Results: %d passed, %d failed, %d skipped${RS}\n\n" "$pass" "$fail" "$skip"
+}
+
+cmd_watch() {
+    # Watch mode: monitor current exercise, re-submit on save
+    local slug="${1:-}"
+    local file="" tc=""
+
+    if [[ -n "$slug" ]]; then
+        file=$(slug_to_file "$slug") || die "Unknown exercise: $slug"
+        tc=$(slug_to_tc "$slug")
+    else
+        # Find next undone exercise
+        while IFS='|' read -r idx s t cat title relpath; do
+            local f="$EXERCISES_DIR/$relpath"
+            if ! is_done "$f"; then
+                slug="$s"; file="$f"; tc="$t"
+                break
+            fi
+        done < "$MANIFEST"
+        [[ -n "$slug" ]] || { ok "All exercises completed! Nothing to watch."; exit 0; }
+    fi
+
+    clear
+    printf "${BO}${C}"
+    cat << 'ART'
+    ╦ ╦╔╦╗╦  ╔╗ ╦╔╦╗╔═╗
+    ╠═╣ ║║║  ╠╩╗║ ║ ╚═╗
+    ╩ ╩═╩╝╩═╝╚═╝╩ ╩ ╚═╝
+ART
+    printf "${RS}"
+    printf "${DI}  Watch mode — saves trigger auto-submit${RS}\n"
+    printf "${DI}  Ctrl+C to quit${RS}\n"
+    echo ""
+
+    _watch_exercise "$slug" "$file" "$tc"
+
+    # After exercise done, move to next
+    while true; do
+        local next_slug="" next_file="" next_tc=""
+        local found_current=0
+
+        while IFS='|' read -r idx s t cat title relpath; do
+            if [[ "$s" == "$slug" ]]; then
+                found_current=1
+                continue
+            fi
+            if [[ $found_current -eq 1 ]]; then
+                local f="$EXERCISES_DIR/$relpath"
+                if ! is_done "$f"; then
+                    next_slug="$s"; next_file="$f"; next_tc="$t"
+                    break
+                fi
+            fi
+        done < "$MANIFEST"
+
+        if [[ -z "$next_slug" ]]; then
+            # Wrap around / check from beginning
+            while IFS='|' read -r idx s t cat title relpath; do
+                local f="$EXERCISES_DIR/$relpath"
+                if ! is_done "$f"; then
+                    next_slug="$s"; next_file="$f"; next_tc="$t"
+                    break
+                fi
+            done < "$MANIFEST"
+        fi
+
+        if [[ -z "$next_slug" ]]; then
+            echo ""
+            printf "  ${G}${BO}🎉 All exercises completed!${RS}\n\n"
+            exit 0
+        fi
+
+        slug="$next_slug"; file="$next_file"; tc="$next_tc"
+
+        echo ""
+        printf "  ${C}Moving to next exercise: ${BO}%s${RS}\n\n" "$slug"
+        _watch_exercise "$slug" "$file" "$tc"
+    done
+}
+
+_watch_exercise() {
+    local slug="$1" file="$2" tc="$3"
+
+    local line; line=$(manifest_get "$slug")
+    local title; title=$(manifest_field "$line" 4)
+    local cat; cat=$(manifest_field "$line" 3)
+    local pretty_cat; pretty_cat=$(cat_pretty "$cat")
+
+    printf "  ${BO}${M}%s${RS} ${DI}› %s${RS}\n" "$pretty_cat" "$title"
+    printf "  ${DI}File: %s${RS}\n" "$file"
+    echo ""
+
+    # Show if already done
+    if is_done "$file"; then
+        printf "  ${G}Already marked done! Remove '// I AM NOT DONE' was already done.${RS}\n"
+        return 0
+    fi
+
+    # Initial run
+    printf "  ${DI}Waiting for changes to %s ...${RS}\n" "$(basename "$file")"
+    printf "  ${DI}(Edit the file and save to auto-submit)${RS}\n\n"
+
+    local last_hash=""
+    last_hash=$(md5sum "$file" 2>/dev/null | cut -d' ' -f1)
+
+    while true; do
+        sleep 1
+        local new_hash
+        new_hash=$(md5sum "$file" 2>/dev/null | cut -d' ' -f1)
+
+        if [[ "$new_hash" != "$last_hash" ]]; then
+            last_hash="$new_hash"
+
+            # Check if marked done
+            if is_done "$file"; then
+                echo ""
+                ok "'// I AM NOT DONE' removed — exercise marked complete!"
+                return 0
+            fi
+
+            # Submit
+            printf "\n${C}›${RS} Change detected — submitting ${BO}%s${RS}...\n" "$slug"
+            printf "${DI}  (Quartus + ModelSim)${RS}\n"
+
+            local code; code=$(cat "$file")
+            submit_code "$tc" "$code"
+            print_result "$slug"
+
+            if [[ "$STATUS" == "Success!" ]]; then
+                printf "  ${G}Remove the '// I AM NOT DONE' line to proceed.${RS}\n"
+            else
+                printf "  ${DI}Fix your code and save again...${RS}\n"
+            fi
+        fi
+    done
+}
+
+cmd_reset() {
+    local slug="$1"
+    local file; file=$(slug_to_file "$slug") || die "Unknown exercise: $slug"
+
+    # Re-generate from JSON
+    python3 "$SCRIPT_DIR/generate.py" 2>/dev/null
+    ok "Reset $slug to original state"
+}
+
+cmd_open() {
+    local slug="$1"
+    local file; file=$(slug_to_file "$slug") || die "Unknown exercise: $slug"
+    local editor="${EDITOR:-${VISUAL:-vi}}"
+    exec "$editor" "$file"
+}
+
+cmd_help() {
+    cat << 'EOF'
+
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  hdlbits — rustlings-style Verilog exercises                ║
+  ║  All 182 HDLBits problems, graded from your terminal.       ║
+  ╚══════════════════════════════════════════════════════════════╝
+
+  USAGE
+    hdlbits <command> [exercise]
+
+  COMMANDS
+    watch [name]      Watch mode — auto-submit on file save (default: next)
+    run <name>        Submit and grade a single exercise
+    hint <name>       Show the hint for an exercise
+    open <name>       Open exercise file in $EDITOR
+    next              Show the next incomplete exercise
+    list [filter]     List all exercises with ✓/○ progress
+    verify            Re-grade all completed exercises
+    reset <name>      Reset exercise to original starter code
+    help              This message
+
+  WORKFLOW (rustlings-style)
+    1.  hdlbits watch              ← Start watch mode
+    2.  Open the exercise file in your editor
+    3.  Read the problem (it's in the comments)
+    4.  Write your Verilog solution
+    5.  Save — watch mode auto-submits via HDLBits API
+    6.  If ✅ Success, delete the "// I AM NOT DONE" line & save
+    7.  Watch mode auto-advances to the next exercise
+
+  OR (manual mode)
+    1.  hdlbits next               ← See what's next
+    2.  hdlbits open <name>        ← Edit in $EDITOR
+    3.  hdlbits run <name>         ← Submit & grade
+    4.  Remove "// I AM NOT DONE" when passing
+
+  HOW GRADING WORKS
+    Your code is sent to hdlbits.01xz.net where:
+    • Intel Quartus synthesizes your Verilog
+    • ModelSim simulates it against their reference
+    • You get: Success / Compile Error / Incorrect
+
+EOF
+}
+
+# ── Main ────────────────────────────────────────────────────────────
+
+[[ -f "$MANIFEST" ]] || die "Missing .manifest — run: python3 generate.py"
+[[ -d "$EXERCISES_DIR" ]] || die "Missing exercises/ — run: python3 generate.py"
+
+case "${1:-help}" in
+    watch)    cmd_watch "${2:-}" ;;
+    run)      [[ -n "${2:-}" ]] || die "Usage: hdlbits run <name>"; cmd_run "$2" ;;
+    hint)     [[ -n "${2:-}" ]] || die "Usage: hdlbits hint <name>"; cmd_hint "$2" ;;
+    open)     [[ -n "${2:-}" ]] || die "Usage: hdlbits open <name>"; cmd_open "$2" ;;
+    next)     cmd_next ;;
+    list)     cmd_list "${2:-}" ;;
+    verify)   cmd_verify ;;
+    reset)    [[ -n "${2:-}" ]] || die "Usage: hdlbits reset <name>"; cmd_reset "$2" ;;
+    help|--help|-h) cmd_help ;;
+    *)        die "Unknown command: $1 — run: hdlbits help" ;;
+esac

@@ -1,0 +1,20 @@
+00_getting_started|Getting Started
+01_basics|Verilog Language › Basics
+02_vectors|Verilog Language › Vectors
+03_modules|Verilog Language › Modules
+04_procedures|Verilog Language › Procedures
+05_more_features|Verilog Language › More Features
+06_comb_basic_gates|Circuits › Combinational › Basic Gates
+07_comb_mux|Circuits › Combinational › Multiplexers
+08_comb_arith|Circuits › Combinational › Arithmetic
+09_comb_karnaugh|Circuits › Combinational › Karnaugh Maps
+10_seq_flipflops|Circuits › Sequential › Flip-Flops
+11_seq_counters|Circuits › Sequential › Counters
+12_seq_shift_reg|Circuits › Sequential › Shift Registers
+13_seq_more|Circuits › Sequential › More Circuits
+14_seq_fsm|Circuits › Sequential › Finite State Machines
+15_building_larger|Circuits › Building Larger Circuits
+16_bugs|Verification › Finding Bugs
+17_sim_waveforms|Verification › Simulation Waveforms
+18_testbenches|Verification › Writing Testbenches
+19_cs450|CS450

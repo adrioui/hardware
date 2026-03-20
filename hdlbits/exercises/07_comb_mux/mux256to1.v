@@ -1,0 +1,27 @@
+// ==========================================================================
+// HDLBits — 256-to-1 multiplexer
+// https://hdlbits.01xz.net/wiki/mux256to1
+// ==========================================================================
+//
+// Create a 1-bit wide, 256-to-1 multiplexer. The 256 inputs are all packed
+// into a single 256-bit input vector. sel=0 should select `in[0]`, sel=1
+// selects bits `in[1]`, sel=2 selects bits `in[2]`, etc.
+//
+// **
+// ***Expected solution length:** Around 1 line.*
+//
+// ──────────────────────────────────────────────────────────────────────────
+// HINT:
+// • With this many options, a case statement isn't so useful.
+//
+// • Vector indices can be variable, as long as the synthesizer can figure out that the width of the bits being selected is constant. In particular, selecting one bit out of a vector using a variable index will work.
+// ──────────────────────────────────────────────────────────────────────────
+
+// I AM NOT DONE
+
+module top_module( 
+    input [255:0] in,
+    input [7:0] sel,
+    output out );
+
+endmodule
