@@ -29,17 +29,17 @@
 //    ┌──────────────────────────────────────────────────────┐
 //    │  Bitwise vs. Logical operations on vectors           │
 //    │                                                      │
-//    │  a[2:0] = 3'b110                                    │
-//    │  b[2:0] = 3'b100                                    │
+//    │  a[2:0] = 3'b110                                     │
+//    │  b[2:0] = 3'b100                                     │
 //    │                                                      │
-//    │  Bitwise AND:  a & b  = 3'b100  (bit-by-bit)        │
-//    │  Bitwise OR:   a | b  = 3'b110                      │
-//    │  Bitwise XOR:  a ^ b  = 3'b010                      │
-//    │  Bitwise NOT:  ~a     = 3'b001                      │
+//    │  Bitwise AND:  a & b  = 3'b100  (bit-by-bit)         │
+//    │  Bitwise OR:   a | b  = 3'b110                       │
+//    │  Bitwise XOR:  a ^ b  = 3'b010                       │
+//    │  Bitwise NOT:  ~a     = 3'b001                       │
 //    │                                                      │
-//    │  Logical AND:  a && b = 1'b1    (result is 1 bit)   │
-//    │  Logical OR:   a || b = 1'b1                        │
-//    │  Logical NOT:  !a     = 1'b0                        │
+//    │  Logical AND:  a && b = 1'b1    (result is 1 bit)    │
+//    │  Logical OR:   a || b = 1'b1                         │
+//    │  Logical NOT:  !a     = 1'b0                         │
 //    └──────────────────────────────────────────────────────┘
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -49,7 +49,6 @@
 // entire vector all in one statement.
 // ──────────────────────────────────────────────────────────────────────────
 
-// I AM NOT DONE
 
 module top_module( 
     input [2:0] a,
@@ -58,5 +57,8 @@ module top_module(
     output out_or_logical,
     output [5:0] out_not
 );
-
+    assign out_or_bitwise = a | b;
+    assign out_or_logical = a || b;
+    assign out_not[5:3] = ~b;
+    assign out_not[2:0] = ~a;
 endmodule
