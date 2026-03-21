@@ -49,11 +49,13 @@ hdlbits reset <name>    Reset to starter code
 
 ## Setup (from scratch)
 
+Requires [uv](https://docs.astral.sh/uv/).
+
 ```bash
-python3 scrape_all.py    # Scrape all 182 exercises from hdlbits.01xz.net
-python3 generate.py      # Generate exercise .v files
+uv run python3 scrape_all.py    # Scrape all 182 exercises from hdlbits.01xz.net
+uv run python3 generate.py      # Generate exercise .v files
 chmod +x hdlbits
-./hdlbits watch          # Go!
+./hdlbits watch                  # Go!
 ```
 
 ## Grading
