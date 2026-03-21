@@ -1,0 +1,2 @@
+- vector from hdlbits
+    - using concatenation requires you to **know the width** of each vector because how else?
