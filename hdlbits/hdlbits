@@ -449,7 +449,7 @@ cmd_reset() {
     local file; file=$(slug_to_file "$slug") || die "Unknown exercise: $slug"
 
     # Re-generate from JSON
-    python3 "$SCRIPT_DIR/generate.py" 2>/dev/null
+    uv run python3 "$SCRIPT_DIR/generate.py" 2>/dev/null
     ok "Reset $slug to original state"
 }
 
@@ -508,8 +508,8 @@ EOF
 
 # ── Main ────────────────────────────────────────────────────────────
 
-[[ -f "$MANIFEST" ]] || die "Missing .manifest — run: python3 generate.py"
-[[ -d "$EXERCISES_DIR" ]] || die "Missing exercises/ — run: python3 generate.py"
+[[ -f "$MANIFEST" ]] || die "Missing .manifest — run: uv run python3 generate.py"
+[[ -d "$EXERCISES_DIR" ]] || die "Missing exercises/ — run: uv run python3 generate.py"
 
 case "${1:-help}" in
     watch)    cmd_watch "${2:-}" ;;

@@ -1,0 +1,5 @@
+[project]
+name = "hdlbits"
+version = "0.1.0"
+description = "Rustlings-style Verilog exercises from HDLBits, graded from the terminal"
+requires-python = ">=3.12"
