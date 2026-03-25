@@ -1,0 +1,6 @@
+-module-filename
+-always-comb
+-explicit-parameter-storage-type
+-module-port
+-case-missing-default
+-truncated-numeric-literal

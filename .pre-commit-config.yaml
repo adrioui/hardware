@@ -1,0 +1,14 @@
+repos:
+  - repo: local
+    hooks:
+      - id: verible-verilog-lint
+        name: verible-verilog-lint (solved only)
+        entry: ./scripts/verible-lint-solved.sh --rules_config=.verible-lint.rules
+        language: system
+        types_or: [verilog, system-verilog]
+
+      - id: verible-verilog-format
+        name: verible-verilog-format (solved only)
+        entry: ./scripts/verible-format-solved.sh --inplace
+        language: system
+        types_or: [verilog, system-verilog]
