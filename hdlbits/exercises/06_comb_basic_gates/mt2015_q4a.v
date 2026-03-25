@@ -12,6 +12,10 @@
 
 // I AM NOT DONE
 
-module top_module (input x, input y, output z);
+module top_module (
+    input  x,
+    input  y,
+    output z
+);
 
 endmodule

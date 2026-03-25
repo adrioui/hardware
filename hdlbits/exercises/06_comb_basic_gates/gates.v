@@ -29,8 +29,9 @@
 
 // I AM NOT DONE
 
-module top_module( 
-    input a, b,
+module top_module (
+    input  a,
+    b,
     output out_and,
     output out_or,
     output out_xor,

@@ -40,7 +40,7 @@
 //
 //    FSM diagram (exam 2013 Q2):
 //    (See the HDLBits page for exact state transitions)
-//  
+//
 //    State machine with multiple states.
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -49,9 +49,9 @@
 
 module top_module (
     input clk,
-    input resetn,    // active-low synchronous reset
-    input [3:1] r,   // request
-    output [3:1] g   // grant
+    input resetn,  // active-low synchronous reset
+    input [3:1] r,  // request
+    output [3:1] g  // grant
 );
 
 endmodule

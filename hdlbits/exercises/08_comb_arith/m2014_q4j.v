@@ -13,7 +13,7 @@
 // DIAGRAM: Exams_m2014q4j.png
 //
 //    2-bit adder:
-//  
+//
 //    a ──►┌──────────┐
 //         │  + (add) ├──► sum
 //    b ──►└──────────┘
@@ -23,8 +23,9 @@
 // I AM NOT DONE
 
 module top_module (
-    input [3:0] x,
-    input [3:0] y, 
-    output [4:0] sum);
+    input  [3:0] x,
+    input  [3:0] y,
+    output [4:0] sum
+);
 
 endmodule

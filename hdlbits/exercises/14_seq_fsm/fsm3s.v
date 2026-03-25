@@ -21,7 +21,7 @@
 // DIAGRAM: Fsm3.png
 //
 //    4-state Moore FSM:
-//  
+//
 //    State transition table:
 //    ┌───────┬──────────────┬────────┐
 //    │ State │  Next state  │ Output │
@@ -32,7 +32,7 @@
 //    │   C   │  A   │   D   │   0    │
 //    │   D   │  C   │   B   │   1    │
 //    └───────┴──────┴───────┴────────┘
-//  
+//
 //           in=0    in=1    in=0
 //     ┌──►A ────► B ────► ? ────► ...
 //     │  out=0
@@ -42,17 +42,18 @@
 
 // I AM NOT DONE
 
-module top_module(
-    input clk,
-    input in,
-    input reset,
-    output out);
-//
+module top_module (
+    input  clk,
+    input  in,
+    input  reset,
+    output out
+);
+  //
 
-    // State transition logic
+  // State transition logic
 
-    // State flip-flops with synchronous reset
+  // State flip-flops with synchronous reset
 
-    // Output logic
+  // Output logic
 
 endmodule

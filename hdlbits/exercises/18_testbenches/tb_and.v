@@ -23,6 +23,6 @@
 
 // I AM NOT DONE
 
-module top_module(   );
+module top_module ();
 
 endmodule

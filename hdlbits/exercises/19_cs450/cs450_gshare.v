@@ -141,7 +141,7 @@
 // DIAGRAM: Branch_predictor.png
 //
 //    Gshare branch predictor:
-//  
+//
 //    ┌──────────────────────────────────────────────┐
 //    │  PC ═══►┌──────┐                             │
 //    │         │ XOR  │══► index ═══►┌───────┐      │
@@ -158,12 +158,12 @@
 
 // I AM NOT DONE
 
-module top_module(
+module top_module (
     input clk,
     input areset,
 
-    input  predict_valid,
-    input  [6:0] predict_pc,
+    input predict_valid,
+    input [6:0] predict_pc,
     output predict_taken,
     output [6:0] predict_history,
 

@@ -24,9 +24,9 @@ module top_module (
     output [7:0] s,
     output overflow
 );
-//
- 
-    // assign s = ...
-    // assign overflow = ...
+  //
+
+  // assign s = ...
+  // assign overflow = ...
 
 endmodule

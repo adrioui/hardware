@@ -24,11 +24,12 @@
 // I AM NOT DONE
 
 module top_module (
-    input a,
-    input b,
-    output q );
-//
+    input  a,
+    input  b,
+    output q
+);
+  //
 
-    assign q = 0; // Fix me
+  assign q = 0;  // Fix me
 
 endmodule

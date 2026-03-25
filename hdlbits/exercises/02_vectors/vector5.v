@@ -27,11 +27,11 @@
 // DIAGRAM: Vector5.png
 //
 //    Replication operator:  {num{vector}}
-//  
+//
 //    {5{1'b1}}         = 5'b11111
 //    {2{a,b,c}}        = {a,b,c,a,b,c}
 //    {3'd5, {2{3'd6}}} = 9'b101_110_110
-//  
+//
 //    Sign extension example:
 //    ┌─────────────────────────────────────────────────┐
 //    │  wire [7:0] a;                                  │
@@ -44,7 +44,12 @@
 
 
 module top_module (
-    input a, b, c, d, e,
-    output [24:0] out );
-assign out = ~{{5{a}},{5{b}},{5{c}},{5{d}},{5{e}}} ^ {5{a,b,c,d,e}};
+    input a,
+    b,
+    c,
+    d,
+    e,
+    output [24:0] out
+);
+  assign out = ~{{5{a}}, {5{b}}, {5{c}}, {5{d}}, {5{e}}} ^ {5{a, b, c, d, e}};
 endmodule

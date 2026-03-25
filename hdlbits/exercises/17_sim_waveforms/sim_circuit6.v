@@ -22,7 +22,8 @@
 // I AM NOT DONE
 
 module top_module (
-    input [2:0] a,
-    output [15:0] q );
+    input  [ 2:0] a,
+    output [15:0] q
+);
 
 endmodule

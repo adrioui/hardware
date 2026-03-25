@@ -58,7 +58,7 @@
 // DIAGRAM: Fsm_ps2.png
 //
 //    PS/2 Packet Parser FSM:
-//  
+//
 //       ┌──────────┐  in[3]=1  ┌──────────┐         ┌──────────┐
 //       │  IDLE    │─────────►│  BYTE1   │────────►│  BYTE2   │
 //       │          │◄─────────│          │         │          │
@@ -68,7 +68,7 @@
 //            │   │  DONE    │◄──────────────────────────┘
 //            └──►│ done=1   │
 //                └──────────┘
-//  
+//
 //    Wait for byte with bit[3]=1, then count 3 bytes, assert done.
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -82,17 +82,18 @@
 
 // I AM NOT DONE
 
-module top_module(
+module top_module (
     input clk,
     input [7:0] in,
-    input reset,    // Synchronous reset
-    output done);
-//
+    input reset,  // Synchronous reset
+    output done
+);
+  //
 
-    // State transition logic (combinational)
+  // State transition logic (combinational)
 
-    // State flip-flops (sequential)
- 
-    // Output logic
+  // State flip-flops (sequential)
+
+  // Output logic
 
 endmodule

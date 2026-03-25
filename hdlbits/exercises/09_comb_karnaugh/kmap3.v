@@ -17,7 +17,7 @@
 // DIAGRAM: Kmap3.png
 //
 //    4-variable Karnaugh Map (2):
-//  
+//
 //                cd
 //            00   01   11   10
 //          ┌─────┬─────┬─────┬─────┐
@@ -29,7 +29,7 @@
 //          ├─────┼─────┼─────┼─────┤
 //    ab=10 │     │     │     │     │
 //          └─────┴─────┴─────┴─────┘
-//  
+//
 //    (See the HDLBits page for the exact cell values)
 //    Simplify to SOP or POS form.
 //
@@ -37,11 +37,12 @@
 
 // I AM NOT DONE
 
-module top_module(
-    input a,
-    input b,
-    input c,
-    input d,
-    output out  );
+module top_module (
+    input  a,
+    input  b,
+    input  c,
+    input  d,
+    output out
+);
 
 endmodule

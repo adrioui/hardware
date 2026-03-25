@@ -23,10 +23,13 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input enable,
-    input S,
-    input A, B, C,
-    output Z );
+    input  clk,
+    input  enable,
+    input  S,
+    input  A,
+    B,
+    C,
+    output Z
+);
 
 endmodule

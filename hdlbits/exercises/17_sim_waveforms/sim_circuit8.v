@@ -30,9 +30,10 @@
 // I AM NOT DONE
 
 module top_module (
-    input clock,
-    input a,
+    input  clock,
+    input  a,
     output p,
-    output q );
+    output q
+);
 
 endmodule

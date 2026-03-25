@@ -15,12 +15,15 @@
 
 // I AM NOT DONE
 
-module top_module ( output reg A, output reg B );
-//
+module top_module (
+    output reg A,
+    output reg B
+);
+  //
 
-    // generate input patterns here
-    initial begin
+  // generate input patterns here
+  initial begin
 
-    end
+  end
 
 endmodule

@@ -37,8 +37,8 @@
 // I AM NOT DONE
 
 // synthesis verilog_input_version verilog_2001
-module top_module ( 
-    input [2:0] sel, 
+module top_module (
+    input [2:0] sel,
     input [3:0] data0,
     input [3:0] data1,
     input [3:0] data2,

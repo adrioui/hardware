@@ -43,10 +43,10 @@
 
 // I AM NOT DONE
 
-module top_module(
-    input clk,
-    input in,
-    input reset,    // Synchronous reset
+module top_module (
+    input  clk,
+    input  in,
+    input  reset,  // Synchronous reset
     output done
 );
 

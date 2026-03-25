@@ -47,10 +47,11 @@
 
 // I AM NOT DONE
 
-module top_module(
+module top_module (
     input clk,
     input load,
     input [511:0] data,
-    output [511:0] q );
+    output [511:0] q
+);
 
 endmodule

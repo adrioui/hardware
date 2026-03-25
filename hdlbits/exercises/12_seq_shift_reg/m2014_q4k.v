@@ -11,7 +11,7 @@
 // DIAGRAM: Exams_m2014q4k.png
 //
 //    Shift register:
-//  
+//
 //          ┌──────┐    ┌──────┐    ┌──────┐    ┌──────┐
 //    in ──►│D    Q├───►│D    Q├───►│D    Q├───►│D    Q├──►out
 //          │  >   │    │  >   │    │  >   │    │  >   │
@@ -24,9 +24,10 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input resetn,   // synchronous reset
-    input in,
-    output out);
+    input  clk,
+    input  resetn,  // synchronous reset
+    input  in,
+    output out
+);
 
 endmodule

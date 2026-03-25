@@ -59,7 +59,7 @@
 // DIAGRAM: Alwayscomb.png
 //
 //    Combinational: assign vs. always @(*)
-//  
+//
 //    ┌───────────────────────────┐    ┌───────────────────────────┐
 //    │  Using assign:            │    │  Using always block:      │
 //    │                           │    │                           │
@@ -69,7 +69,7 @@
 //    │       │ AND ├──► out      │    │                           │
 //    │  b ──►└─────┘             │    │  (Same circuit!)          │
 //    └───────────────────────────┘    └───────────────────────────┘
-//  
+//
 //    Both produce identical hardware
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -77,8 +77,8 @@
 // I AM NOT DONE
 
 // synthesis verilog_input_version verilog_2001
-module top_module(
-    input a, 
+module top_module (
+    input a,
     input b,
     output wire out_assign,
     output reg out_alwaysblock

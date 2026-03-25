@@ -31,8 +31,8 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input d,
+    input  clk,
+    input  d,
     output q
 );
 

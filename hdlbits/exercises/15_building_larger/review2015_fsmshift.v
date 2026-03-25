@@ -26,8 +26,9 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input reset,      // Synchronous reset
-    output shift_ena);
+    input  clk,
+    input  reset,     // Synchronous reset
+    output shift_ena
+);
 
 endmodule

@@ -14,8 +14,8 @@
 
 // I AM NOT DONE
 
-module top_module( 
-    input [99:0] in,
+module top_module (
+    input  [99:0] in,
     output [99:0] out
 );
 

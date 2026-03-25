@@ -14,13 +14,13 @@
 // DIAGRAM: Exams_m2014q4a.png
 //
 //    D Latch (level-sensitive):
-//  
+//
 //          ┌──────┐
 //    d ───►│D    Q├───► q
 //          │      │
 //    ena ─►│EN    │
 //          └──────┘
-//  
+//
 //    When ena=1: q follows d
 //    When ena=0: q holds previous value
 //
@@ -36,8 +36,9 @@
 // I AM NOT DONE
 
 module top_module (
-    input d, 
-    input ena,
-    output q);
+    input  d,
+    input  ena,
+    output q
+);
 
 endmodule

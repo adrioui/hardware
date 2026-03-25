@@ -17,7 +17,7 @@
 // DIAGRAM: Kmap1.png
 //
 //    3-variable Karnaugh Map:
-//  
+//
 //              ab
 //          00  01  11  10
 //        ┌────┬────┬────┬────┐
@@ -25,7 +25,7 @@
 //        ├────┼────┼────┼────┤
 //    c=1 │    │    │    │    │
 //        └────┴────┴────┴────┘
-//  
+//
 //    (See the HDLBits page for the exact cell values)
 //    Simplify using K-map grouping.
 //
@@ -33,10 +33,11 @@
 
 // I AM NOT DONE
 
-module top_module(
-    input a,
-    input b,
-    input c,
-    output out  );
+module top_module (
+    input  a,
+    input  b,
+    input  c,
+    output out
+);
 
 endmodule

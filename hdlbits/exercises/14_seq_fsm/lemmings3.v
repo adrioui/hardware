@@ -49,7 +49,7 @@
 // DIAGRAM: Lemmings3.png
 //
 //    Lemmings 6-state FSM (with digging):
-//  
+//
 //       ┌───────────┐  bump   ┌───────────┐
 //       │WALK_LEFT  │◄───────►│WALK_RIGHT │
 //       └──┬──┬─────┘         └──┬──┬─────┘
@@ -68,16 +68,16 @@
 //             │ gnd=1               │ gnd=1
 //             ▼                     ▼
 //        WALK_LEFT             WALK_RIGHT
-//  
+//
 //    Priority: fall > dig > switch direction
 //
 // ──────────────────────────────────────────────────────────────────────────
 
 // I AM NOT DONE
 
-module top_module(
+module top_module (
     input clk,
-    input areset,    // Freshly brainwashed Lemmings walk left.
+    input areset,  // Freshly brainwashed Lemmings walk left.
     input bump_left,
     input bump_right,
     input ground,
@@ -85,6 +85,7 @@ module top_module(
     output walk_left,
     output walk_right,
     output aaah,
-    output digging );
+    output digging
+);
 
 endmodule

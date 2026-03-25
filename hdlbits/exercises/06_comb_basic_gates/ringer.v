@@ -36,7 +36,7 @@
 // DIAGRAM: Ringer.png
 //
 //    Phone ringer / vibrate:
-//  
+//
 //    ┌─────────────────────────────────────────┐
 //    │  Inputs:     ring, vibrate_mode         │
 //    │  Outputs:    ringer, motor              │
@@ -58,10 +58,10 @@
 // I AM NOT DONE
 
 module top_module (
-    input ring,
-    input vibrate_mode,
-    output ringer,       // Make sound
-    output motor         // Vibrate
+    input  ring,
+    input  vibrate_mode,
+    output ringer,        // Make sound
+    output motor          // Vibrate
 );
 
 endmodule

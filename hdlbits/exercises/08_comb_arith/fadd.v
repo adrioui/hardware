@@ -13,8 +13,12 @@
 
 // I AM NOT DONE
 
-module top_module( 
-    input a, b, cin,
-    output cout, sum );
+module top_module (
+    input  a,
+    b,
+    cin,
+    output cout,
+    sum
+);
 
 endmodule

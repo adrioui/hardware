@@ -10,8 +10,9 @@
 
 // I AM NOT DONE
 
-module top_module( 
-    input [2:0] in,
-    output [1:0] out );
+module top_module (
+    input  [2:0] in,
+    output [1:0] out
+);
 
 endmodule

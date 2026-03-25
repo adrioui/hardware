@@ -17,7 +17,7 @@
 // DIAGRAM: Mt2015_q4.png
 //
 //    Top-level circuit using mux-dff submodules:
-//  
+//
 //    (Uses the Mt2015_muxdff submodule)
 //    Three instances of the mux+DFF submodule chained together.
 //
@@ -30,6 +30,10 @@
 
 // I AM NOT DONE
 
-module top_module (input x, input y, output z);
+module top_module (
+    input  x,
+    input  y,
+    output z
+);
 
 endmodule

@@ -16,9 +16,11 @@
 
 // I AM NOT DONE
 
-module top_module( 
-    input [99:0] a, b,
+module top_module (
+    input [99:0] a,
+    b,
     input sel,
-    output [99:0] out );
+    output [99:0] out
+);
 
 endmodule

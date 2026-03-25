@@ -21,8 +21,9 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input a,
-    output q );
+    input  clk,
+    input  a,
+    output q
+);
 
 endmodule

@@ -25,7 +25,7 @@
 //
 //    FSM diagram (exam 2012 Q2):
 //    (See the HDLBits page for exact state transitions)
-//  
+//
 //    State machine with multiple states.
 //    Used for both Q2a (FSM) and Q2b (one-hot equations).
 //

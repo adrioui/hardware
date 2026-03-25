@@ -52,9 +52,9 @@
 
 // I AM NOT DONE
 
-module top_module(
-    input [31:0] a,
-    input [31:0] b,
+module top_module (
+    input  [31:0] a,
+    input  [31:0] b,
     output [31:0] sum
 );
 

@@ -58,7 +58,7 @@
 //
 //    FSM for review 2015 (one-hot):
 //    (See the HDLBits page for exact state diagram)
-//  
+//
 //    FSM with multiple states, used for both:
 //    - review2015_fsm (complete FSM design)
 //    - review2015_fsmonehot (one-hot logic equations)
@@ -68,13 +68,14 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input reset,      // Synchronous reset
-    input data,
+    input  clk,
+    input  reset,          // Synchronous reset
+    input  data,
     output shift_ena,
     output counting,
-    input done_counting,
+    input  done_counting,
     output done,
-    input ack );
+    input  ack
+);
 
 endmodule

@@ -14,7 +14,7 @@
 // DIAGRAM: Exams_2014q4.png
 //
 //    Mux + DFF circuit (exam question):
-//  
+//
 //             ┌──────┐   ┌──────┐
 //    d ──────►│ 0    │   │      │
 //             │ MUX  ├──►│D    Q├──┬──► q
@@ -29,8 +29,11 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input w, R, E, L,
+    input  clk,
+    input  w,
+    R,
+    E,
+    L,
     output Q
 );
 

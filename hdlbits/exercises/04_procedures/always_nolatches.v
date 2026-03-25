@@ -62,6 +62,7 @@ module top_module (
     output reg left,
     output reg down,
     output reg right,
-    output reg up  );
+    output reg up
+);
 
 endmodule

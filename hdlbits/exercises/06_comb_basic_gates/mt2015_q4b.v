@@ -14,13 +14,17 @@
 // DIAGRAM: Mt2015_q4b.png
 //
 //    Sequential circuit with mux and DFFs:
-//  
+//
 //    (Variation of mt2015_q4 - see HDLBits page for details)
 //
 // ──────────────────────────────────────────────────────────────────────────
 
 // I AM NOT DONE
 
-module top_module ( input x, input y, output z );
+module top_module (
+    input  x,
+    input  y,
+    output z
+);
 
 endmodule

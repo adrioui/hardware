@@ -28,10 +28,11 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input a,
-    input b,
+    input  clk,
+    input  a,
+    input  b,
     output q,
-    output state  );
+    output state
+);
 
 endmodule

@@ -16,7 +16,7 @@
 //
 //    FSM state diagram (exam Q6):
 //    (See the HDLBits page for exact state transitions)
-//  
+//
 //    Multiple states with transitions based on w input.
 //    One-hot encoding version also required.
 //
@@ -25,9 +25,10 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input reset,     // synchronous reset
-    input w,
-    output z);
+    input  clk,
+    input  reset,  // synchronous reset
+    input  w,
+    output z
+);
 
 endmodule

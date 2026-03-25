@@ -36,11 +36,11 @@
 
 // I AM NOT DONE
 
-module top_module(
-	input clk, 
-	input load, 
-	input [9:0] data, 
-	output tc
+module top_module (
+    input clk,
+    input load,
+    input [9:0] data,
+    output tc
 );
 
 endmodule

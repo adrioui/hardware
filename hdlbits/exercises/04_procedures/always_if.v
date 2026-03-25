@@ -42,7 +42,7 @@
 // DIAGRAM: Always_if_mux.png
 //
 //    if statement = 2-to-1 multiplexer:
-//  
+//
 //    ┌─────────────────────────────────────────────┐
 //    │                                             │
 //    │         ┌────────┐                          │
@@ -62,12 +62,13 @@
 // I AM NOT DONE
 
 // synthesis verilog_input_version verilog_2001
-module top_module(
+module top_module (
     input a,
     input b,
     input sel_b1,
     input sel_b2,
     output wire out_assign,
-    output reg out_always   );
+    output reg out_always
+);
 
 endmodule

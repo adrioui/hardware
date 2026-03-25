@@ -30,6 +30,7 @@
 module top_module (
     input clk,
     input a,
-    output [3:0] q );
+    output [3:0] q
+);
 
 endmodule

@@ -68,7 +68,7 @@
 // DIAGRAM: Branch_history.png
 //
 //    Branch history shift register:
-//  
+//
 //    ┌──────────────────────────────────────┐
 //    │  Global History Register             │
 //    │                                      │
@@ -83,7 +83,7 @@
 
 // I AM NOT DONE
 
-module top_module(
+module top_module (
     input clk,
     input areset,
 

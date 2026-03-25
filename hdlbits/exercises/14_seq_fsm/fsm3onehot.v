@@ -52,7 +52,7 @@
 // DIAGRAM: Fsm3.png
 //
 //    4-state Moore FSM:
-//  
+//
 //    State transition table:
 //    ┌───────┬──────────────┬────────┐
 //    │ State │  Next state  │ Output │
@@ -63,7 +63,7 @@
 //    │   C   │  A   │   D   │   0    │
 //    │   D   │  C   │   B   │   1    │
 //    └───────┴──────┴───────┴────────┘
-//  
+//
 //           in=0    in=1    in=0
 //     ┌──►A ────► B ────► ? ────► ...
 //     │  out=0
@@ -92,7 +92,7 @@ module top_module(
     assign next_state[C] = ...;
     assign next_state[D] = ...;
 
-    // Output logic: 
+    // Output logic:
     assign out = ...;
 
 endmodule

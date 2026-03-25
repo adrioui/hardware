@@ -62,7 +62,7 @@
 //
 //    HDLC Framing FSM:
 //    Detect: 0111110 (disc), 01111110 (flag), 01111111... (err)
-//  
+//
 //    ┌────┐ 1 ┌────┐ 1 ┌────┐ 1 ┌────┐ 1 ┌────┐ 1 ┌────┐
 //    │ S0 ├──►│ S1 ├──►│ S2 ├──►│ S3 ├──►│ S4 ├──►│ S5 │
 //    └──┬─┘   └──┬─┘   └──┬─┘   └──┬─┘   └──┬─┘   └──┬─┘
@@ -88,12 +88,13 @@
 
 // I AM NOT DONE
 
-module top_module(
-    input clk,
-    input reset,    // Synchronous reset
-    input in,
+module top_module (
+    input  clk,
+    input  reset,  // Synchronous reset
+    input  in,
     output disc,
     output flag,
-    output err);
+    output err
+);
 
 endmodule

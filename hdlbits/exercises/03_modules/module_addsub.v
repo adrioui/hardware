@@ -51,11 +51,11 @@
 // DIAGRAM: Module_addsub_xor.png
 //
 //    XOR as programmable inverter:
-//  
+//
 //    b ────►┌─────┐
 //           │ XOR ├────► output
 //    sub ──►└─────┘
-//  
+//
 //    sub=0:  output = b      (pass through)
 //    sub=1:  output = ~b     (invert)
 //
@@ -68,7 +68,7 @@
 
 // I AM NOT DONE
 
-module top_module(
+module top_module (
     input [31:0] a,
     input [31:0] b,
     input sub,

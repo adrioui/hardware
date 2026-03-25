@@ -33,9 +33,9 @@
 // ──────────────────────────────────────────────────────────────────────────
 
 
-module top_module(
+module top_module (
     output zero
 );
-// Module body starts after semicolon
+  // Module body starts after semicolon
 
 endmodule

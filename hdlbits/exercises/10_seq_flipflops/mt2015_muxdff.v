@@ -18,7 +18,7 @@
 // DIAGRAM: Mt2015_muxdff.png
 //
 //    Mux + DFF submodule:
-//  
+//
 //             ┌──────┐   ┌──────┐
 //    d ──────►│ 0    │   │      │
 //             │ MUX  ├──►│D    Q├──┬──► q
@@ -34,10 +34,11 @@
 // I AM NOT DONE
 
 module top_module (
-	input clk,
-	input L,
-	input r_in,
-	input q_in,
-	output reg Q);
+    input clk,
+    input L,
+    input r_in,
+    input q_in,
+    output reg Q
+);
 
 endmodule

@@ -22,7 +22,7 @@
 //
 //    FSM state diagram (exam Q6):
 //    (See the HDLBits page for exact state transitions)
-//  
+//
 //    Multiple states with transitions based on w input.
 //    One-hot encoding version also required.
 //
@@ -33,6 +33,7 @@
 module top_module (
     input [3:1] y,
     input w,
-    output Y2);
+    output Y2
+);
 
 endmodule

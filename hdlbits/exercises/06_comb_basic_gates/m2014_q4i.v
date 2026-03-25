@@ -11,7 +11,7 @@
 // DIAGRAM: Exams_m2014q4i.png
 //
 //    GND (constant 0):
-//  
+//
 //    GND ─── 0 ──────────────► out
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -19,6 +19,7 @@
 // I AM NOT DONE
 
 module top_module (
-    output out);
+    output out
+);
 
 endmodule

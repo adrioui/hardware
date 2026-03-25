@@ -36,7 +36,7 @@
 //
 //    FSM diagram (exam 2014 Q3):
 //    (See the HDLBits page for exact state transitions)
-//  
+//
 //    State machine with multiple states and transitions.
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -44,10 +44,10 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input reset,   // Synchronous reset
-    input s,
-    input w,
+    input  clk,
+    input  reset,  // Synchronous reset
+    input  s,
+    input  w,
     output z
 );
 

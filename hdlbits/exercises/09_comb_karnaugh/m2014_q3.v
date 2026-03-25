@@ -14,7 +14,7 @@
 // DIAGRAM: Exams_m2014q3.png
 //
 //    Karnaugh Map (exam question):
-//  
+//
 //                cd
 //            00   01   11   10
 //          ┌─────┬─────┬─────┬─────┐
@@ -26,7 +26,7 @@
 //          ├─────┼─────┼─────┼─────┤
 //    ab=10 │     │     │     │     │
 //          └─────┴─────┴─────┴─────┘
-//  
+//
 //    (See the HDLBits page for exact cell values)
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -34,7 +34,8 @@
 // I AM NOT DONE
 
 module top_module (
-    input [4:1] x, 
-    output f );
+    input [4:1] x,
+    output f
+);
 
 endmodule

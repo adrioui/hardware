@@ -25,9 +25,9 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input areset,
-    input x,
+    input  clk,
+    input  areset,
+    input  x,
     output z
 );
 

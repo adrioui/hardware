@@ -23,7 +23,7 @@
 // DIAGRAM: Fsm3.png
 //
 //    4-state Moore FSM:
-//  
+//
 //    State transition table:
 //    ┌───────┬──────────────┬────────┐
 //    │ State │  Next state  │ Output │
@@ -34,7 +34,7 @@
 //    │   C   │  A   │   D   │   0    │
 //    │   D   │  C   │   B   │   1    │
 //    └───────┴──────┴───────┴────────┘
-//  
+//
 //           in=0    in=1    in=0
 //     ┌──►A ────► B ────► ? ────► ...
 //     │  out=0
@@ -44,17 +44,18 @@
 
 // I AM NOT DONE
 
-module top_module(
+module top_module (
     input in,
     input [1:0] state,
     output [1:0] next_state,
-    output out);
-//
+    output out
+);
+  //
 
-    parameter A=0, B=1, C=2, D=3;
+  parameter A = 0, B = 1, C = 2, D = 3;
 
-    // State transition logic: next_state = f(state, in)
+  // State transition logic: next_state = f(state, in)
 
-    // Output logic:  out = f(state) for a Moore state machine
+  // Output logic:  out = f(state) for a Moore state machine
 
 endmodule

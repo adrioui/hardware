@@ -11,7 +11,7 @@
 // DIAGRAM: Exams_m2014q4c.png
 //
 //    D Flip-Flop with enable:
-//  
+//
 //          ┌──────┐
 //    d ───►│D    Q├───► q
 //          │      │
@@ -25,9 +25,10 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input d, 
-    input r,   // synchronous reset
-    output q);
+    input  clk,
+    input  d,
+    input  r,    // synchronous reset
+    output q
+);
 
 endmodule

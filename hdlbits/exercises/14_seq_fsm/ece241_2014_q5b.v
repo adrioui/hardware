@@ -20,7 +20,7 @@
 // DIAGRAM: Ece241_2014_q5b.png
 //
 //    Mealy FSM - Serial two's complementer:
-//  
+//
 //    ┌───────┐  x=0/0  ┌───────┐
 //    │       │◄────────│       │
 //    │   A   │         │   B   │
@@ -29,7 +29,7 @@
 //         ▲                │
 //         │   x=1/0        │ x=0/0
 //         └────────────────┘
-//  
+//
 //    Format: input/output (Mealy)
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -37,9 +37,9 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,
-    input areset,
-    input x,
+    input  clk,
+    input  areset,
+    input  x,
     output z
 );
 

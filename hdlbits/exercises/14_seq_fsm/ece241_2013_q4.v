@@ -14,7 +14,7 @@
 //
 //    Moore FSM (ECE241 2013 Q4):
 //    (See the HDLBits page for exact state diagram)
-//  
+//
 //    Design a Moore FSM with specified states and transitions.
 //
 // ──────────────────────────────────────────────────────────────────────────

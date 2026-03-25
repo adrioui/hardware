@@ -39,7 +39,7 @@
 // DIAGRAM: Lemmings2.png
 //
 //    Lemmings 4-state FSM (with falling):
-//  
+//
 //       ┌───────────┐  bump   ┌───────────┐
 //       │WALK_LEFT  │◄───────►│WALK_RIGHT │
 //       │walk_left=1│         │walk_left=0│
@@ -59,14 +59,15 @@
 
 // I AM NOT DONE
 
-module top_module(
+module top_module (
     input clk,
-    input areset,    // Freshly brainwashed Lemmings walk left.
+    input areset,  // Freshly brainwashed Lemmings walk left.
     input bump_left,
     input bump_right,
     input ground,
     output walk_left,
     output walk_right,
-    output aaah );
+    output aaah
+);
 
 endmodule

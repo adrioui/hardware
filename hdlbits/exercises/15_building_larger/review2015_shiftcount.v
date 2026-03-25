@@ -31,6 +31,7 @@ module top_module (
     input shift_ena,
     input count_ena,
     input data,
-    output [3:0] q);
+    output [3:0] q
+);
 
 endmodule

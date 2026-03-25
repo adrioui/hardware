@@ -19,13 +19,13 @@
 // DIAGRAM: Dff.png
 //
 //    D Flip-Flop:
-//  
+//
 //          ┌──────┐
 //    d ───►│D    Q├───► q
 //          │      │
 //    clk ─►│>     │
 //          └──────┘
-//  
+//
 //    always @(posedge clk)
 //        q <= d;
 //
@@ -34,13 +34,14 @@
 // I AM NOT DONE
 
 module top_module (
-    input clk,    // Clocks are used in sequential circuits
+    input clk,  // Clocks are used in sequential circuits
     input d,
-    output reg q );
-//
+    output reg q
+);
+  //
 
-    // Use a clocked always block
-    //   copy d to q at every positive edge of clk
-    //   Clocked always blocks should use non-blocking assignments
+  // Use a clocked always block
+  //   copy d to q at every positive edge of clk
+  //   Clocked always blocks should use non-blocking assignments
 
 endmodule

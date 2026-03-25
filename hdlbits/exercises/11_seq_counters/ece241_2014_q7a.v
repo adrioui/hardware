@@ -46,8 +46,13 @@ module top_module (
     output c_load,
     output [3:0] c_d
 );
-//
+  //
 
-    count4 the_counter (clk, c_enable, c_load, c_d /*, ... */ );
+  count4 the_counter (
+      clk,
+      c_enable,
+      c_load,
+      c_d  /*, ... */
+  );
 
 endmodule

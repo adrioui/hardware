@@ -14,7 +14,7 @@
 // DIAGRAM: Fsm1s.png
 //
 //    Moore FSM (2 states, synchronous reset to B):
-//  
+//
 //                         in=1
 //                  ┌────────────────────┐
 //                  │     in=0           ▼
@@ -40,7 +40,7 @@ module top_module(clk, reset, in, out);
     input reset;    // Synchronous reset to state B
     input in;
     output out;
-//  
+//
     reg out;
 
     // Fill in state name declarations
@@ -48,7 +48,7 @@ module top_module(clk, reset, in, out);
     reg present_state, next_state;
 
     always @(posedge clk) begin
-        if (reset) begin  
+        if (reset) begin
             // Fill in reset logic
         end else begin
             case (present_state)
@@ -56,7 +56,7 @@ module top_module(clk, reset, in, out);
             endcase
 
             // State flip-flops
-            present_state = next_state;   
+            present_state = next_state;
 
             case (present_state)
                 // Fill in output logic

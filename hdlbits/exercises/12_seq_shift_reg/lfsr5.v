@@ -24,7 +24,7 @@
 // DIAGRAM: Lfsr5.png
 //
 //    5-bit Galois LFSR (taps at positions 5 and 3):
-//  
+//
 //    ┌──────────────────────────────────────────────────────┐
 //    │                                                      │
 //    │  ┌───┐    ┌───┐   ┌───┐    ┌───┐    ┌───┐           │
@@ -52,9 +52,9 @@
 
 // I AM NOT DONE
 
-module top_module(
+module top_module (
     input clk,
-    input reset,    // Active-high synchronous reset to 5'h1
+    input reset,  // Active-high synchronous reset to 5'h1
     output [4:0] q
 );
 

@@ -18,7 +18,7 @@
 //
 //    4-variable Karnaugh Map (3):
 //    Hint: output toggles when any single input changes
-//  
+//
 //                cd
 //            00   01   11   10
 //          ┌─────┬─────┬─────┬─────┐
@@ -30,7 +30,7 @@
 //          ├─────┼─────┼─────┼─────┤
 //    ab=10 │  1  │  0  │  1  │  0  │
 //          └─────┴─────┴─────┴─────┘
-//  
+//
 //    f = a ^ b ^ c ^ d  (4-input XOR)
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -42,11 +42,12 @@
 
 // I AM NOT DONE
 
-module top_module(
-    input a,
-    input b,
-    input c,
-    input d,
-    output out  );
+module top_module (
+    input  a,
+    input  b,
+    input  c,
+    input  d,
+    output out
+);
 
 endmodule

@@ -11,7 +11,7 @@
 // DIAGRAM: Exams_m2014q4h.png
 //
 //    Simple wire:
-//  
+//
 //    in ──────────────────────► out
 //
 // ──────────────────────────────────────────────────────────────────────────
@@ -19,7 +19,8 @@
 // I AM NOT DONE
 
 module top_module (
-    input in,
-    output out);
+    input  in,
+    output out
+);
 
 endmodule
