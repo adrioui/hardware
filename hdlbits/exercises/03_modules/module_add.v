@@ -45,16 +45,16 @@ module top_module (
   wire wire1;
 
   add16 instance1 (
-    .a(a[15:0]),
-    .b(b[15:0]),
-    .cin(1'b0),
-    .cout(wire1),
-    .sum(sum[15:0])
+      .a(a[15:0]),
+      .b(b[15:0]),
+      .cin(1'b0),
+      .cout(wire1),
+      .sum(sum[15:0])
   );
   add16 instance2 (
-    .a(a[31:16]),
-    .b(b[31:16]),
-    .cin(wire1),
-    .sum(sum[31:16])
+      .a  (a[31:16]),
+      .b  (b[31:16]),
+      .cin(wire1),
+      .sum(sum[31:16])
   );
 endmodule
