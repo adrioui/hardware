@@ -29,7 +29,7 @@
   - runs: `npx vitest run tests/parser.test.ts`
   - validates: module/port extraction tests pass
 
-- [ ] **1.5** Implement parser Phase B — instantiation detection + connection mapping
+- [x] **1.5** Implement parser Phase B — instantiation detection + connection mapping
   - reads: `specs/phase1-scaffold-parser.md`, `src/core/parser.ts`
   - runs: `npx vitest run tests/parser.test.ts`
   - validates: instantiation tests pass
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-1.5
+1.6
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
