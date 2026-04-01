@@ -64,7 +64,7 @@
   - runs: `npx tsc --noEmit`
   - validates: no type errors, tokens.css has Tokyo Night palette
 
-- [ ] **2.4** Implement custom ModuleNode component (`src/components/ModuleNode.tsx`)
+- [x] **2.4** Implement custom ModuleNode component (`src/components/ModuleNode.tsx`)
   - reads: `specs/phase2-hierarchy-viz.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-2.4
+2.5
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
