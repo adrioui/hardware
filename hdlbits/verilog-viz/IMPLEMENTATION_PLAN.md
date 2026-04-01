@@ -34,7 +34,7 @@
   - runs: `npx vitest run tests/parser.test.ts`
   - validates: instantiation tests pass
 
-- [ ] **1.6** Implement parser edge cases — generate blocks, ifdef, parameterized modules, error recovery
+- [x] **1.6** Implement parser edge cases — generate blocks, ifdef, parameterized modules, error recovery
   - reads: `specs/phase1-scaffold-parser.md`, `src/core/parser.ts`
   - runs: `npx vitest run tests/parser.test.ts`
   - validates: all edge case tests pass
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-1.6
+1.7
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
