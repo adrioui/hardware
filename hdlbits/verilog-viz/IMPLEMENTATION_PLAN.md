@@ -39,11 +39,11 @@
   - runs: `npx vitest run tests/parser.test.ts`
   - validates: all edge case tests pass
 
-- [ ] **1.7** Create 5 example Verilog files (`full_adder.v`, `counter.v`, `mux4.v`, `alu.v`, `fsm.v`)
+- [x] **1.7** Create 5 example Verilog files (`full_adder.v`, `counter.v`, `mux4.v`, `alu.v`, `fsm.v`)
   - reads: `specs/phase1-scaffold-parser.md`
   - validates: files exist in `public/examples/`, parser extracts correct modules from each
 
-- [ ] **1.8** Full Phase 1 validation — typecheck + all tests + build
+- [x] **1.8** Full Phase 1 validation — typecheck + all tests + build
   - runs: `npx tsc --noEmit && npx vitest run && npm run build`
   - validates: all pass, zero errors
 
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-1.7
+2.1
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
