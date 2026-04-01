@@ -79,7 +79,7 @@
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **2.7** Implement `useParser` hook (`src/hooks/useParser.ts`) — debounced parsing
+- [x] **2.7** Implement `useParser` hook (`src/hooks/useParser.ts`) — debounced parsing
   - reads: `specs/phase2-hierarchy-viz.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-2.7
+2.8
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
