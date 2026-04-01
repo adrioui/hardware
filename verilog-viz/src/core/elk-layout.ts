@@ -9,8 +9,7 @@
  * instead of the main bundle.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const ELKConstructor = require('elkjs/lib/elk-api.js').default as new (opts?: object) => { layout: (g: unknown) => Promise<unknown> };
+import ELKConstructor from 'elkjs/lib/elk-api.js';
 import type { ElkNode } from 'elkjs/lib/elk-api.js';
 import type { ElkGraph } from './converter';
 

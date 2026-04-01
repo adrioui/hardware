@@ -3,18 +3,6 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import type {
-  ParsedDesign,
-  ParsedModule,
-  Port,
-  Instance,
-  Parameter,
-  ParseError,
-  SourceLocation,
-  ParserOptions,
-  Token,
-  ParserState
-} from '../src/types';
 import { TokenType } from '../src/types';
 import {
   parseVerilog,

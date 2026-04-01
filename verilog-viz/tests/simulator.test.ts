@@ -8,7 +8,7 @@
  *  - Full adder (sum + carry propagation)
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   evalAnd, evalOr, evalXor, evalNot, evalMux,
   evalAdd, evalSub, evalEq, evalLt, evalGt,
@@ -17,7 +17,7 @@ import {
   initSimState, propagate, stepDff, readOutput,
   type SignalValue, type Bit,
 } from '../src/core/simulator';
-import type { YosysNetlist, YosysModule } from '../src/core/rtl-converter';
+import type { YosysModule } from '../src/core/rtl-converter';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

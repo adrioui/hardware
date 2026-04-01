@@ -524,22 +524,3 @@ export function UnknownNode({ id, data, selected }: NodeProps<UnknownNodeType>) 
     />
   );
 }
-
-// ── nodeTypes map for React Flow ──────────────────────────────────────────────
-
-/**
- * Pass this to `<ReactFlow nodeTypes={rtlNodeTypes} …>` when rendering
- * the RTL-schematic view.
- */
-export const rtlNodeTypes = {
-  operator:   OperatorNode  as unknown as React.ComponentType<NodeProps>,
-  gate:       GateNode      as unknown as React.ComponentType<NodeProps>,
-  mux:        MuxNode       as unknown as React.ComponentType<NodeProps>,
-  dff:        DffNode       as unknown as React.ComponentType<NodeProps>,
-  constant:   ConstantNode  as unknown as React.ComponentType<NodeProps>,
-  inputPort:  InputPortNode as unknown as React.ComponentType<NodeProps>,
-  outputPort: OutputPortNode as unknown as React.ComponentType<NodeProps>,
-  unknown:    UnknownNode   as unknown as React.ComponentType<NodeProps>,
-} as const;
-
-export default rtlNodeTypes;

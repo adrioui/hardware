@@ -245,3 +245,6 @@ DONE ✅
 
 ## Discovered Issues
 (none yet)
+
+## Maintenance Notes
+- 2026-04-02 — Added spec-aligned parser regression coverage, simplified parser header/instance scanning, restored ESLint flat config, and removed dead lint issues so lint/typecheck/tests/build all pass again.

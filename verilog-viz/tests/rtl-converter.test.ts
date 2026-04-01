@@ -9,7 +9,7 @@ import {
   portNodeId,
   convertNetlistToFlow,
 } from '../src/core/rtl-converter';
-import type { YosysNetlist, YosysModule, RtlNodeType } from '../src/core/rtl-converter';
+import type { YosysNetlist, RtlNodeType } from '../src/core/rtl-converter';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

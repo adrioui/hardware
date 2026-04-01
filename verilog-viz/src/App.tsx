@@ -151,7 +151,6 @@ function App() {
         }
       })
       .catch((err: unknown) => console.warn('Failed to parse share URL:', err));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Parse & layout ─────────────────────────────────────────────────────────

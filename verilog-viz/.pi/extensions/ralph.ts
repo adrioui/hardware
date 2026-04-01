@@ -143,7 +143,7 @@ async function checkOffTask(
 
   // Check off the task: - [ ] **id** → - [x] **id**
   const checkRe = new RegExp(`^(- )\\[ \\]( \\*\\*${escapeRegex(taskId)}\\*\\*)`, "m");
-  let updated = lines.join("\n").replace(checkRe, "$1[x]$2");
+  const updated = lines.join("\n").replace(checkRe, "$1[x]$2");
   const updatedLines = updated.split("\n");
 
   // Update "Current Task" value
