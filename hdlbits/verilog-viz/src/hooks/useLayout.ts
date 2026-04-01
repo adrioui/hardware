@@ -106,7 +106,7 @@ function elkToReactFlow(
   }
 
   // ── Convert ELK nodes → React Flow nodes ─────────────────────────────────
-  const nodes: Node[] = laidOut.children.map((elkNode) => {
+  const nodes: Node[] = laidOut.children.map((elkNode, entranceIndex) => {
     let data: ModuleNodeData;
 
     if (elkNode.id === BOUNDARY_IN_ID) {
@@ -139,6 +139,9 @@ function elkToReactFlow(
         ports: info?.ports ?? [],
       };
     }
+
+    // Tag each node with its index so ModuleNode can stagger entrance animation
+    data = { ...data, entranceIndex };
 
     return {
       id: elkNode.id,
@@ -195,10 +198,12 @@ export interface UseLayoutResult {
  *
  * @param design         Parsed Verilog design (or null when editor is empty).
  * @param topModuleName  Optional override for which module is the top level.
+ * @param triggerKey     Increment to force a re-layout even if design hasn't changed.
  */
 export function useLayout(
   design: ParsedDesign | null,
   topModuleName?: string,
+  triggerKey?: number,
 ): UseLayoutResult {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -245,7 +250,7 @@ export function useLayout(
     return () => {
       cancelled = true;
     };
-  }, [design, topModuleName]);
+  }, [design, topModuleName, triggerKey]);
 
   return { nodes, edges, isLayouting };
 }

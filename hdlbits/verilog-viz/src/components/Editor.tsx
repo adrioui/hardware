@@ -18,6 +18,7 @@ import React, {
   useRef,
   forwardRef,
 } from 'react';
+import type { ParseError } from '../types/parser';
 import { EditorView, lineNumbers, highlightActiveLine } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
 import {
@@ -41,6 +42,7 @@ import {
   ViewUpdate,
   keymap,
 } from '@codemirror/view';
+import { linter, lintGutter, setDiagnostics, type Diagnostic } from '@codemirror/lint';
 import { StateEffect, StateField, RangeSet } from '@codemirror/state';
 
 // ── Signal-highlight decoration ───────────────────────────────────────────────
@@ -150,6 +152,8 @@ export interface EditorProps {
    * Pass `null` to clear wire highlighting.
    */
   onSignalClick?: (name: string | null) => void;
+  /** Parse errors to show as red underlines in the editor. */
+  parseErrors?: ParseError[];
   style?: React.CSSProperties;
   className?: string;
 }
@@ -157,7 +161,7 @@ export interface EditorProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
-  { value, onChange, onSignalClick, style, className },
+  { value, onChange, onSignalClick, parseErrors, style, className },
   ref,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -167,6 +171,8 @@ export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
   onChangeRef.current = onChange;
   const onSignalClickRef = useRef(onSignalClick);
   onSignalClickRef.current = onSignalClick;
+  const parseErrorsRef = useRef(parseErrors);
+  parseErrorsRef.current = parseErrors;
 
   // Create the editor once on mount
   useEffect(() => {
@@ -192,9 +198,12 @@ export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
         // UI features
         lineNumbers(),
         foldGutter(),
+        lintGutter(),
         highlightActiveLine(),
         bracketMatching(),
         codeFolding(),
+        // Linting (parse errors → red underlines)
+        linter(() => [], { delay: 0 }),
         // History
         history(),
         // Search
@@ -230,6 +239,28 @@ export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
       changes: { from: 0, to: current.length, insert: value },
     });
   }, [value]);
+
+  // Sync parse errors → CodeMirror diagnostics (red underlines)
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    const doc = view.state.doc;
+    const diagnostics: Diagnostic[] = (parseErrors ?? []).map((err) => {
+      // Convert 1-based line/col to doc offset
+      const line = err.loc?.line ?? 1;
+      const col = err.loc?.column ?? 1;
+      const lineInfo = doc.line(Math.min(line, doc.lines));
+      const from = Math.min(lineInfo.from + col - 1, lineInfo.to);
+      const to = Math.min(from + 1, lineInfo.to);
+      return {
+        from,
+        to,
+        severity: 'error' as const,
+        message: err.message,
+      };
+    });
+    view.dispatch(setDiagnostics(view.state, diagnostics));
+  }, [parseErrors]);
 
   // Expose imperative API
   useImperativeHandle(

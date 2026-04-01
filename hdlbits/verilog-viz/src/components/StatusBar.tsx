@@ -1,9 +1,11 @@
 /**
- * StatusBar — bottom bar showing parse results and module counts.
+ * StatusBar — bottom bar showing parse results, layout state,
+ * and Yosys synthesis progress.
  */
 
 import React from 'react';
 import type { ParsedDesign, ParseError } from '../types';
+import type { SynthesisStatus } from '../hooks/useSynthesis';
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -12,6 +14,10 @@ export interface StatusBarProps {
   errors: ParseError[];
   isParsing: boolean;
   isLayouting: boolean;
+  /** Current synthesis lifecycle state (optional — omit when synthesis not wired up) */
+  synthesisStatus?: SynthesisStatus;
+  /** Human-readable progress/error message from useSynthesis */
+  synthesisMessage?: string;
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
@@ -42,6 +48,10 @@ const S = {
     color: 'var(--color-wire-reset)',
   } satisfies React.CSSProperties,
 
+  warn: {
+    color: 'var(--color-wire-active)',
+  } satisfies React.CSSProperties,
+
   muted: {
     color: 'var(--color-text-muted)',
   } satisfies React.CSSProperties,
@@ -62,6 +72,8 @@ export function StatusBar({
   errors,
   isParsing,
   isLayouting,
+  synthesisStatus,
+  synthesisMessage,
 }: StatusBarProps) {
   let content: React.ReactNode;
 
@@ -69,6 +81,13 @@ export function StatusBar({
     content = <span style={S.muted}>Parsing…</span>;
   } else if (isLayouting) {
     content = <span style={S.muted}>Laying out…</span>;
+  } else if (synthesisStatus === 'loading' || synthesisStatus === 'synthesizing') {
+    // Active synthesis run — highest priority after busy states
+    content = (
+      <span style={S.muted}>
+        ⟳ {synthesisMessage ?? (synthesisStatus === 'loading' ? 'Loading Yosys engine…' : 'Synthesizing…')}
+      </span>
+    );
   } else if (errors.length > 0) {
     const first = errors[0];
     const more = errors.length > 1 ? ` (+${errors.length - 1} more)` : '';
@@ -77,17 +96,29 @@ export function StatusBar({
         ✖ Line {first.loc.line}: {first.message}{more}
       </span>
     );
+  } else if (synthesisStatus === 'error') {
+    content = (
+      <span style={S.err}>
+        ✖ {synthesisMessage ?? 'Synthesis failed'}
+      </span>
+    );
   } else if (design && design.modules.size > 0) {
     const modCount = design.modules.size;
     const instCount = countInstances(design);
-    content = (
-      <span style={S.ok}>
-        ✔ Parsed {modCount} module{modCount !== 1 ? 's' : ''}
-        {instCount > 0
-          ? `, ${instCount} instance${instCount !== 1 ? 's' : ''}`
-          : ''}
-      </span>
+    const parseInfo = (
+      <>✔ Parsed {modCount} module{modCount !== 1 ? 's' : ''}{instCount > 0 ? `, ${instCount} instance${instCount !== 1 ? 's' : ''}` : ''}</>
     );
+    if (synthesisStatus === 'done') {
+      content = (
+        <span style={S.ok}>
+          {parseInfo} — ✔ Synthesis complete
+        </span>
+      );
+    } else {
+      content = <span style={S.ok}>{parseInfo}</span>;
+    }
+  } else if (synthesisStatus === 'done') {
+    content = <span style={S.ok}>✔ Synthesis complete</span>;
   } else {
     content = <span style={S.muted}>Ready</span>;
   }

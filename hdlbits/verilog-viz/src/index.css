@@ -95,3 +95,54 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
 }
+
+/* ── Node entrance animation ────────────────────────────────────────────────── */
+
+@keyframes node-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Applied per-node via inline animationDelay for stagger */
+.rf-node-enter {
+  animation: node-enter 200ms ease forwards;
+}
+
+/* ── Node selection pulse ───────────────────────────────────────────────────── */
+
+@keyframes node-select-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-node-selected) 60%, transparent); }
+  50%  { box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-node-selected) 0%, transparent); }
+  100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-node-selected) 35%, transparent); }
+}
+
+.rf-node-selected-pulse {
+  animation: node-select-pulse 300ms ease forwards;
+}
+
+/* ── Theme transition ───────────────────────────────────────────────────────── */
+
+body,
+.app-root,
+.editor-panel,
+.diagram-panel {
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* ── CodeMirror lint gutter ─────────────────────────────────────────────────── */
+
+.cm-lintRange-error {
+  text-decoration: underline wavy var(--color-wire-reset, #f7768e);
+  text-underline-offset: 2px;
+}
+
+.cm-lintRange-warning {
+  text-decoration: underline wavy var(--color-wire-clock, #e0af68);
+  text-underline-offset: 2px;
+}

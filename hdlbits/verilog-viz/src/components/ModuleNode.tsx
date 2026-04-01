@@ -8,10 +8,17 @@
  *   - Right-side output ports         (orange handles + labels)
  *   - Bus ports: width annotation shown next to the port name
  *   - Selected state: accent border + glow
+ *
+ * Semantic zoom (via `useDetailLevel`):
+ *   'box'    – coloured box only; all text hidden
+ *   'names'  – header text visible; port labels hidden until port is hovered
+ *   'full'   – full labels + bus-width annotations  (default)
+ *   'detail' – full labels + width annotation on every port
  */
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
+import { useDetailLevel, type DetailLevel } from '../hooks/useZoomLevel';
 
 // ── Data type attached to each ModuleNode ─────────────────────────────────────
 
@@ -28,6 +35,8 @@ export interface ModuleNodeData extends Record<string, unknown> {
   /** The instance label (e.g. "fa0") */
   instanceName: string;
   ports: ModulePortData[];
+  /** Index within the layout batch — used to stagger entrance animations. */
+  entranceIndex?: number;
 }
 
 /** React Flow node type used as the generic parameter in nodeTypes map */
@@ -53,9 +62,8 @@ function nodeContainerStyle(selected: boolean): React.CSSProperties {
     border: `1.5px solid ${selected ? 'var(--color-node-selected)' : 'var(--color-node-border)'}`,
     borderRadius: 4,
     minWidth: 120,
-    boxShadow: selected
-      ? '0 0 0 3px color-mix(in srgb, var(--color-node-selected) 35%, transparent)'
-      : '0 2px 6px rgba(0,0,0,0.35)',
+    // boxShadow is controlled by CSS animation classes
+    boxShadow: selected ? undefined : '0 2px 6px rgba(0,0,0,0.35)',
     userSelect: 'none',
   };
 }
@@ -92,17 +100,33 @@ const portColumnStyle: React.CSSProperties = {
   flexDirection: 'column',
 };
 
-// ── Port row components ───────────────────────────────────────────────────────
+// ── Port row component ────────────────────────────────────────────────────────
 
 interface PortRowProps {
   port: ModulePortData;
   side: 'left' | 'right';
+  /** Semantic zoom level forwarded from parent. */
+  detailLevel: DetailLevel;
 }
 
-function PortRow({ port, side }: PortRowProps) {
+function PortRow({ port, side, detailLevel }: PortRowProps) {
+  const [hovered, setHovered] = useState(false);
+
   const bus = isBus(port.width);
   const isInput = side === 'left';
 
+  // ── Visibility rules per level ──────────────────────────────────────────
+  // 'box'    → handles only, all text invisible (opacity 0 to keep dimensions)
+  // 'names'  → label visible only when this port row is hovered
+  // 'full'   → label always visible; width annotation only for buses
+  // 'detail' → label always visible; width annotation for all ports
+  const showLabel =
+    detailLevel !== 'box' && (detailLevel !== 'names' || hovered);
+  const showWidth =
+    showLabel &&
+    (detailLevel === 'detail' || (detailLevel === 'full' && bus));
+
+  // ── Handle style ─────────────────────────────────────────────────────────
   const handleStyle: React.CSSProperties = {
     background: isInput
       ? 'var(--color-port-input)'
@@ -129,6 +153,10 @@ function PortRow({ port, side }: PortRowProps) {
     fontSize: 11,
     color: 'var(--color-text-secondary)',
     whiteSpace: 'nowrap',
+    opacity: showLabel ? 1 : 0,
+    transition: 'opacity 0.12s ease',
+    // Keep label in DOM so node width / height stays constant.
+    pointerEvents: showLabel ? undefined : 'none',
   };
 
   const widthStyle: React.CSSProperties = {
@@ -137,7 +165,11 @@ function PortRow({ port, side }: PortRowProps) {
   };
 
   return (
-    <div style={rowStyle}>
+    <div
+      style={rowStyle}
+      onMouseEnter={detailLevel === 'names' ? () => setHovered(true) : undefined}
+      onMouseLeave={detailLevel === 'names' ? () => setHovered(false) : undefined}
+    >
       {isInput && (
         <Handle
           type="target"
@@ -148,17 +180,17 @@ function PortRow({ port, side }: PortRowProps) {
       )}
 
       {isInput ? (
-        /* Input: handle · label [width] */
+        /* Input side: handle · label [width] */
         <span style={labelStyle}>
           {port.name}
-          {bus && (
+          {showWidth && (
             <span style={widthStyle}>&thinsp;{port.width}</span>
           )}
         </span>
       ) : (
-        /* Output: [width] label · handle */
+        /* Output side: [width] label · handle */
         <span style={labelStyle}>
-          {bus && (
+          {showWidth && (
             <span style={widthStyle}>{port.width}&thinsp;</span>
           )}
           {port.name}
@@ -180,18 +212,61 @@ function PortRow({ port, side }: PortRowProps) {
 // ── ModuleNode ────────────────────────────────────────────────────────────────
 
 export function ModuleNode({ data, selected }: NodeProps<ModuleNodeType>) {
+  const detailLevel = useDetailLevel();
+  const prevSelectedRef = useRef(selected);
+  const [pulseKey, setPulseKey] = useState(0);
+
+  // Trigger pulse animation each time the node becomes selected
+  useEffect(() => {
+    if (selected && !prevSelectedRef.current) {
+      setPulseKey((k) => k + 1);
+    }
+    prevSelectedRef.current = selected;
+  }, [selected]);
+
+  const entranceDelay = `${(data.entranceIndex ?? 0) * 20}ms`;
+  const animClass = selected ? 'rf-node-selected-pulse' : 'rf-node-enter';
+  // Use key on the pulse span so the animation restarts each time
+  const pulseSpanKey = selected ? pulseKey : 0;
+
   const inputPorts = data.ports.filter(
     (p) => p.direction === 'input' || p.direction === 'inout',
   );
   const outputPorts = data.ports.filter((p) => p.direction === 'output');
 
+  // At 'box' level, hide header text but keep structural height.
+  const headerTextVisible = detailLevel !== 'box';
+
   return (
-    <div style={nodeContainerStyle(selected ?? false)}>
+    <div
+      key={pulseSpanKey}
+      className={animClass}
+      style={{
+        ...nodeContainerStyle(selected ?? false),
+        animationDelay: selected ? '0ms' : entranceDelay,
+      }}
+    >
       {/* ── Header ── */}
       <div style={headerStyle}>
-        <div style={moduleTypeStyle}>{data.moduleType}</div>
+        <div
+          style={{
+            ...moduleTypeStyle,
+            opacity: headerTextVisible ? 1 : 0,
+            transition: 'opacity 0.12s ease',
+          }}
+        >
+          {data.moduleType}
+        </div>
         {data.instanceName !== data.moduleType && (
-          <div style={instanceNameStyle}>{data.instanceName}</div>
+          <div
+            style={{
+              ...instanceNameStyle,
+              opacity: headerTextVisible ? 1 : 0,
+              transition: 'opacity 0.12s ease',
+            }}
+          >
+            {data.instanceName}
+          </div>
         )}
       </div>
 
@@ -200,14 +275,24 @@ export function ModuleNode({ data, selected }: NodeProps<ModuleNodeType>) {
         {/* Left column — inputs / inouts */}
         <div style={portColumnStyle}>
           {inputPorts.map((port) => (
-            <PortRow key={port.name} port={port} side="left" />
+            <PortRow
+              key={port.name}
+              port={port}
+              side="left"
+              detailLevel={detailLevel}
+            />
           ))}
         </div>
 
         {/* Right column — outputs */}
         <div style={portColumnStyle}>
           {outputPorts.map((port) => (
-            <PortRow key={port.name} port={port} side="right" />
+            <PortRow
+              key={port.name}
+              port={port}
+              side="right"
+              detailLevel={detailLevel}
+            />
           ))}
         </div>
       </div>

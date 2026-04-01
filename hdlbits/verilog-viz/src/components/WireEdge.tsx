@@ -13,6 +13,7 @@
 import React, { useState } from 'react';
 import { BaseEdge, getSmoothStepPath, type EdgeProps, type Edge } from '@xyflow/react';
 import { inferSignalType, SIGNAL_COLORS } from '../theme/colors';
+import { useDetailLevel } from '../hooks/useZoomLevel';
 
 // ── Data type ─────────────────────────────────────────────────────────────────
 
@@ -87,6 +88,7 @@ export function WireEdge({
   style,
 }: EdgeProps<WireEdgeType>) {
   const [hovered, setHovered] = useState(false);
+  const detailLevel = useDetailLevel();
 
   // ── Resolve signal metadata ──────────────────────────────────────────────
   const signalName = data?.signalName ?? '';
@@ -189,8 +191,8 @@ export function WireEdge({
         style={edgeStyle}
       />
 
-      {/* Bus annotation */}
-      {bus && (
+      {/* Bus annotation — hidden at 'box' and 'names' zoom levels */}
+      {bus && detailLevel !== 'box' && detailLevel !== 'names' && (
         <g>
           {/* Diagonal slash */}
           {slashPath && (
@@ -221,8 +223,8 @@ export function WireEdge({
         </g>
       )}
 
-      {/* Tooltip (shown on hover) */}
-      {hovered && tooltip && (
+      {/* Tooltip — hidden at 'box' level, hover-only at other levels */}
+      {hovered && tooltip && detailLevel !== 'box' && (
         <g style={{ pointerEvents: 'none' }}>
           <rect
             x={labelX + 4}
