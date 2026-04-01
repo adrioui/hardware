@@ -54,7 +54,7 @@
   - runs: `npx vitest run tests/converter.test.ts`
   - validates: converter tests pass
 
-- [ ] **2.2** Implement ELK layout wrapper (`src/core/elk-layout.ts`)
+- [x] **2.2** Implement ELK layout wrapper (`src/core/elk-layout.ts`)
   - reads: `specs/phase2-hierarchy-viz.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-2.2
+2.3
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
