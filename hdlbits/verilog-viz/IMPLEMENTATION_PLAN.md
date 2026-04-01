@@ -128,117 +128,117 @@
 
 ### Phase 4: Yosys WASM Integration (Tier 2)
 
-- [ ] **4.1** Install `yosys2digitaljs`, implement Yosys Web Worker (`src/workers/yosys.worker.ts`)
+- [x] **4.1** Install `yosys2digitaljs`, implement Yosys Web Worker (`src/workers/yosys.worker.ts`)
   - reads: `specs/phase4-yosys-rtl.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **4.2** Implement `useSynthesis` hook — worker lifecycle, status states, caching
+- [x] **4.2** Implement `useSynthesis` hook — worker lifecycle, status states, caching
   - reads: `specs/phase4-yosys-rtl.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **4.3** Implement RTL netlist → React Flow converter (`src/core/rtl-converter.ts`)
+- [x] **4.3** Implement RTL netlist → React Flow converter (`src/core/rtl-converter.ts`)
   - reads: `specs/phase4-yosys-rtl.md`
   - runs: `npx vitest run tests/rtl-converter.test.ts`
   - validates: rtl-converter tests pass
 
-- [ ] **4.4** Implement RTL node components (`src/components/RtlNode.tsx`) — OperatorNode, MuxNode, DffNode, GateNode, ConstantNode
+- [x] **4.4** Implement RTL node components (`src/components/RtlNode.tsx`) — OperatorNode, MuxNode, DffNode, GateNode, ConstantNode
   - reads: `specs/phase4-yosys-rtl.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **4.5** Add Hierarchy/RTL tab switching to DiagramCanvas + "Synthesize" button to Toolbar
+- [x] **4.5** Add Hierarchy/RTL tab switching to DiagramCanvas + "Synthesize" button to Toolbar
   - reads: `specs/phase4-yosys-rtl.md`, `src/components/DiagramCanvas.tsx`, `src/components/Toolbar.tsx`
   - runs: `npx tsc --noEmit && npm run build`
   - validates: builds successfully, main bundle < 1MB
 
-- [ ] **4.6** Update StatusBar with synthesis progress display
+- [x] **4.6** Update StatusBar with synthesis progress display
   - reads: `specs/phase4-yosys-rtl.md`, `src/components/StatusBar.tsx`
   - runs: `npm run build`
   - validates: builds successfully
 
 ### Phase 5: Simulation + Waveforms (Tier 3)
 
-- [ ] **5.1** Implement event-driven simulator core (`src/core/simulator.ts`) — cell evaluation functions for all Yosys cell types
+- [x] **5.1** Implement event-driven simulator core (`src/core/simulator.ts`) — cell evaluation functions for all Yosys cell types
   - reads: `specs/phase5-simulation.md`
   - runs: `npx vitest run tests/simulator.test.ts`
   - validates: simulator unit tests pass (AND, MUX, DFF, full adder)
 
-- [ ] **5.2** Implement simulation Web Worker (`src/workers/simulator.worker.ts`)
+- [x] **5.2** Implement simulation Web Worker (`src/workers/simulator.worker.ts`)
   - reads: `specs/phase5-simulation.md`, `src/core/simulator.ts`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **5.3** Implement `useSimulation` hook — worker management, step/run/pause/reset/toggleInput
+- [x] **5.3** Implement `useSimulation` hook — worker management, step/run/pause/reset/toggleInput
   - reads: `specs/phase5-simulation.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **5.4** Add interactive input controls to RTL schematic — click to toggle, multi-bit popover
+- [x] **5.4** Add interactive input controls to RTL schematic — click to toggle, multi-bit popover
   - reads: `specs/phase5-simulation.md`, `src/components/DiagramCanvas.tsx`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **5.5** Implement signal propagation visualization — wire color updates based on signal value
+- [x] **5.5** Implement signal propagation visualization — wire color updates based on signal value
   - reads: `specs/phase5-simulation.md`, `src/components/WireEdge.tsx`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **5.6** Implement Waveform panel (`src/components/Waveform.tsx`) + bottom panel layout
+- [x] **5.6** Implement Waveform panel (`src/components/Waveform.tsx`) + bottom panel layout
   - reads: `specs/phase5-simulation.md`
   - runs: `npx tsc --noEmit && npm run build`
   - validates: builds successfully
 
-- [ ] **5.7** Add simulation controls to Toolbar — play/pause, step, reset, speed control
+- [x] **5.7** Add simulation controls to Toolbar — play/pause, step, reset, speed control
   - reads: `specs/phase5-simulation.md`, `src/components/Toolbar.tsx`
   - runs: `npx tsc --noEmit && npm run build`
   - validates: builds successfully
 
 ### Phase 6: Polish + PWA
 
-- [ ] **6.1** Add Service Worker for WASM caching (`vite-plugin-pwa`)
+- [x] **6.1** Add Service Worker for WASM caching (`vite-plugin-pwa`)
   - reads: `specs/phase6-polish-pwa.md`
   - runs: `npm run build`
   - validates: PWA manifest in `dist/`
 
-- [ ] **6.2** Implement semantic zoom — detail levels based on viewport zoom
+- [x] **6.2** Implement semantic zoom — detail levels based on viewport zoom
   - reads: `specs/phase6-polish-pwa.md`, `src/components/DiagramCanvas.tsx`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **6.3** Add keyboard shortcuts
+- [x] **6.3** Add keyboard shortcuts
   - reads: `specs/phase6-polish-pwa.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **6.4** Implement SVG/PNG export
+- [x] **6.4** Implement SVG/PNG export
   - reads: `specs/phase6-polish-pwa.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **6.5** Implement URL sharing — gzip + base64 encoding, Share button with toast
+- [x] **6.5** Implement URL sharing — gzip + base64 encoding, Share button with toast
   - reads: `specs/phase6-polish-pwa.md`
   - runs: `npx vitest run tests/url-encoding.test.ts`
   - validates: round-trip encode/decode test passes
 
-- [ ] **6.6** UI polish — animations, transitions, toast notifications, parse error underlines, favicon
+- [x] **6.6** UI polish — animations, transitions, toast notifications, parse error underlines, favicon
   - reads: `specs/phase6-polish-pwa.md`
   - runs: `npm run build`
   - validates: builds successfully
 
-- [ ] **6.7** Write README.md
+- [x] **6.7** Write README.md
   - reads: `specs/phase6-polish-pwa.md`
   - validates: README.md exists with usage instructions
 
-- [ ] **6.8** Final validation — full typecheck + all tests + build + bundle size check
+- [x] **6.8** Final validation — full typecheck + all tests + build + bundle size check
   - runs: `npx tsc --noEmit && npx vitest run && npm run build`
   - validates: all pass, main chunk < 1MB
 
 ---
 
 ## Current Task
-4.1
+DONE ✅
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
