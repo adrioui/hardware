@@ -111,7 +111,7 @@
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **3.4** Implement StatusBar component — parse status, module/instance counts
+- [x] **3.4** Implement StatusBar component — parse status, module/instance counts
   - reads: `specs/phase3-editor-layout.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-3.4
+3.5
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
