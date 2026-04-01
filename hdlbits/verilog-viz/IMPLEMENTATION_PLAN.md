@@ -106,7 +106,7 @@
   - runs: `npx tsc --noEmit && npm run build`
   - validates: builds successfully
 
-- [ ] **3.3** Implement Toolbar component — example selector dropdown, parse indicator, theme toggle
+- [x] **3.3** Implement Toolbar component — example selector dropdown, parse indicator, theme toggle
   - reads: `specs/phase3-editor-layout.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-3.3
+3.4
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
