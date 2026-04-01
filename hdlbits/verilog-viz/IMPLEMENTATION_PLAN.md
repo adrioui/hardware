@@ -89,7 +89,7 @@
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **2.9** Wire up App.tsx with basic layout — DiagramCanvas renders parser output via useParser + useLayout
+- [x] **2.9** Wire up App.tsx with basic layout — DiagramCanvas renders parser output via useParser + useLayout
   - reads: `specs/phase2-hierarchy-viz.md`, `src/components/DiagramCanvas.tsx`, `src/hooks/useParser.ts`, `src/hooks/useLayout.ts`
   - runs: `npx tsc --noEmit && npm run build`
   - validates: builds successfully, bundle < 1MB
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-2.9
+3.1
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
