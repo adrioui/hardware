@@ -3,25 +3,35 @@
  *
  * Layout:
  *   ┌──────────────────────────────────────────┐
- *   │  Toolbar (title + status)                │
- *   ├──────────────────┬───────────────────────┤
- *   │  Code Editor     │  Diagram Canvas       │
- *   │  (textarea)      │  (React Flow)         │
- *   │                  │                       │
- *   ├──────────────────┴───────────────────────┤
- *   │  Error bar (parse errors, if any)        │
+ *   │  PanelGroup (horizontal split)           │
+ *   │  ┌─────────────────┬────────────────────┐│
+ *   │  │  editor-panel   │  diagram-panel     ││
+ *   │  │  ┌───────────┐  │                    ││
+ *   │  │  │ Toolbar   │  │  DiagramCanvas     ││
+ *   │  │  ├───────────┤  │  (React Flow)      ││
+ *   │  │  │ Editor    │  │                    ││
+ *   │  │  │ (CM6)     │  │                    ││
+ *   │  │  └───────────┘  │                    ││
+ *   │  └─────────────────┴────────────────────┘│
+ *   │  StatusBar                               │
  *   └──────────────────────────────────────────┘
  *
  * Data flow:
  *   code (string) → useParser → ParsedDesign
  *                             → useLayout  → nodes/edges → DiagramCanvas
+ *
+ * Cross-panel signal highlighting:
+ *   clicking a wire edge → selectedSignal → Editor.highlightSignal()
  */
 
-import React, { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useParser } from './hooks/useParser';
 import { useLayout } from './hooks/useLayout';
 import { DiagramCanvas } from './components/DiagramCanvas';
+import { Editor, type EditorHandle } from './components/Editor';
+import { Toolbar } from './components/Toolbar';
+import { StatusBar } from './components/StatusBar';
 
 // ── Default Verilog code shown on first load ──────────────────────────────────
 
@@ -65,188 +75,126 @@ module full_adder (
 endmodule
 `.trimStart();
 
-// ── Inline style constants ────────────────────────────────────────────────────
+// ── Theme helpers ─────────────────────────────────────────────────────────────
 
-const S = {
-  root: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    height: '100vh',
-    background: 'var(--color-bg-canvas)',
-    color: 'var(--color-text-primary)',
-    overflow: 'hidden',
-  } satisfies React.CSSProperties,
+type Theme = 'dark' | 'light';
 
-  toolbar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0 16px',
-    height: 40,
-    background: 'var(--color-bg-surface)',
-    borderBottom: '1px solid var(--color-border)',
-    flexShrink: 0,
-    userSelect: 'none' as const,
-  } satisfies React.CSSProperties,
+function readStoredTheme(): Theme {
+  try {
+    const v = localStorage.getItem('verilog-viz-theme');
+    if (v === 'dark' || v === 'light') return v;
+  } catch {
+    // ignore
+  }
+  return 'dark';
+}
 
-  toolbarTitle: {
-    fontWeight: 600,
-    fontSize: 14,
-    letterSpacing: '0.02em',
-    color: 'var(--color-text-primary)',
-  } satisfies React.CSSProperties,
-
-  toolbarStatus: {
-    fontSize: 12,
-    color: 'var(--color-text-muted)',
-    fontFamily: 'monospace',
-  } satisfies React.CSSProperties,
-
-  panelGroup: {
-    flex: 1,
-    overflow: 'hidden',
-  } satisfies React.CSSProperties,
-
-  editorPanel: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    height: '100%',
-    background: 'var(--color-bg-surface)',
-    borderRight: '1px solid var(--color-border)',
-  } satisfies React.CSSProperties,
-
-  editorLabel: {
-    padding: '4px 12px',
-    fontSize: 11,
-    color: 'var(--color-text-muted)',
-    background: 'var(--color-bg-canvas)',
-    borderBottom: '1px solid var(--color-border)',
-    flexShrink: 0,
-    fontFamily: '"JetBrains Mono", "Fira Code", monospace',
-    letterSpacing: '0.05em',
-    textTransform: 'uppercase' as const,
-  } satisfies React.CSSProperties,
-
-  textarea: {
-    flex: 1,
-    resize: 'none' as const,
-    border: 'none',
-    outline: 'none',
-    padding: '12px 14px',
-    background: 'var(--color-bg-canvas)',
-    color: 'var(--color-text-primary)',
-    fontFamily: '"JetBrains Mono", "Fira Code", "Cascadia Code", monospace',
-    fontSize: 13,
-    lineHeight: 1.6,
-    overflowY: 'auto' as const,
-    whiteSpace: 'pre' as const,
-    tabSize: 2,
-  } satisfies React.CSSProperties,
-
-  resizeHandle: {
-    width: 4,
-    background: 'var(--color-border)',
-    cursor: 'col-resize',
-    transition: 'background 150ms',
-    flexShrink: 0,
-  } satisfies React.CSSProperties,
-
-  canvasPanel: {
-    height: '100%',
-    position: 'relative' as const,
-  } satisfies React.CSSProperties,
-
-  errorBar: {
-    flexShrink: 0,
-    padding: '6px 14px',
-    background: '#2d1b1e',
-    borderTop: '1px solid #5a1f28',
-    fontSize: 12,
-    fontFamily: 'monospace',
-    color: 'var(--color-wire-reset)',
-    overflowY: 'auto' as const,
-    maxHeight: 100,
-  } satisfies React.CSSProperties,
-
-  errorItem: {
-    marginBottom: 2,
-  } satisfies React.CSSProperties,
-} as const;
+function applyTheme(theme: Theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+}
 
 // ── App ───────────────────────────────────────────────────────────────────────
 
 function App() {
+  // ── State ──────────────────────────────────────────────────────────────────
   const [code, setCode] = useState(DEFAULT_CODE);
+  const [theme, setTheme] = useState<Theme>(readStoredTheme);
+  const [, setSelectedSignal] = useState<string | null>(null);
 
-  // 1. Parse the Verilog source (debounced 300 ms)
+  // Ref to CodeMirror editor for imperative API
+  const editorRef = useRef<EditorHandle>(null);
+
+  // ── Apply theme on mount and changes ───────────────────────────────────────
+  useEffect(() => {
+    applyTheme(theme);
+    try {
+      localStorage.setItem('verilog-viz-theme', theme);
+    } catch {
+      // ignore
+    }
+  }, [theme]);
+
+  // ── Parse & layout ─────────────────────────────────────────────────────────
   const { design, errors, isParsing } = useParser(code);
-
-  // 2. Run ELK layout on the parsed design
   const { nodes, edges, isLayouting } = useLayout(design);
 
   const busy = isParsing || isLayouting;
+  const isOk = !busy && errors.length === 0 && nodes.length > 0;
 
-  // Status line shown in toolbar
-  const statusText = busy
-    ? isParsing
-      ? 'Parsing…'
-      : 'Laying out…'
-    : errors.length > 0
-      ? `${errors.length} error${errors.length > 1 ? 's' : ''}`
-      : nodes.length > 0
-        ? `${nodes.length} node${nodes.length > 1 ? 's' : ''}, ${edges.length} wire${edges.length !== 1 ? 's' : ''}`
-        : 'Ready';
+  // ── Handlers ───────────────────────────────────────────────────────────────
 
+  const handleThemeToggle = useCallback(() => {
+    setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+  }, []);
+
+  const handleExampleLoad = useCallback(async (filename: string) => {
+    try {
+      const res = await fetch(`/examples/${filename}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      setCode(text);
+      editorRef.current?.clearSignalHighlight();
+      setSelectedSignal(null);
+    } catch (err) {
+      console.error('Failed to load example:', filename, err);
+    }
+  }, []);
+
+  const handleSignalSelect = useCallback((signal: string | null) => {
+    setSelectedSignal(signal);
+    if (signal) {
+      editorRef.current?.highlightSignal(signal);
+    } else {
+      editorRef.current?.clearSignalHighlight();
+    }
+  }, []);
+
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div style={S.root}>
-      {/* ── Toolbar ─────────────────────────────────────────────────── */}
-      <header style={S.toolbar}>
-        <span style={S.toolbarTitle}>Verilog Visualizer</span>
-        <span style={S.toolbarStatus}>{statusText}</span>
-      </header>
-
-      {/* ── Split pane ──────────────────────────────────────────────── */}
-      <PanelGroup direction="horizontal" style={S.panelGroup}>
-        {/* Left: code editor */}
-        <Panel defaultSize={35} minSize={15} maxSize={60}>
-          <div style={S.editorPanel}>
-            <div style={S.editorLabel}>Verilog source</div>
-            <textarea
-              style={S.textarea}
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              spellCheck={false}
-              autoCorrect="off"
-              autoCapitalize="off"
-              aria-label="Verilog source editor"
+    <div className="app-root">
+      <PanelGroup direction="horizontal" className="app-panel-group">
+        {/* ── Left: editor panel ───────────────────────────────────────── */}
+        <Panel defaultSize={40} minSize={20} maxSize={65}>
+          <div className="editor-panel">
+            <Toolbar
+              isOk={isOk}
+              isBusy={busy}
+              theme={theme}
+              onThemeToggle={handleThemeToggle}
+              onExampleLoad={handleExampleLoad}
             />
-            {errors.length > 0 && (
-              <div style={S.errorBar}>
-                {errors.map((err, i) => (
-                  <div key={i} style={S.errorItem}>
-                    {err.severity === 'warning' ? '⚠' : '✖'}{' '}
-                    Line {err.loc.line}: {err.message}
-                  </div>
-                ))}
-              </div>
-            )}
+            <Editor
+              ref={editorRef}
+              value={code}
+              onChange={setCode}
+              className="editor-cm"
+            />
           </div>
         </Panel>
 
-        {/* Resize handle */}
-        <PanelResizeHandle style={S.resizeHandle} />
+        {/* ── Resize handle ────────────────────────────────────────────── */}
+        <PanelResizeHandle className="resize-handle" />
 
-        {/* Right: diagram canvas */}
-        <Panel minSize={30}>
-          <div style={S.canvasPanel}>
+        {/* ── Right: diagram panel ─────────────────────────────────────── */}
+        <Panel defaultSize={60} minSize={30}>
+          <div className="diagram-panel">
             <DiagramCanvas
               nodes={nodes}
               edges={edges}
+              onPaneClick={() => handleSignalSelect(null)}
               style={{ height: '100%' }}
             />
           </div>
         </Panel>
       </PanelGroup>
+
+      {/* ── Status bar ─────────────────────────────────────────────────── */}
+      <StatusBar
+        design={design}
+        errors={errors}
+        isParsing={isParsing}
+        isLayouting={isLayouting}
+      />
     </div>
   );
 }

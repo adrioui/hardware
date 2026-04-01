@@ -1,4 +1,8 @@
-/* Global reset */
+/* ── Fonts ──────────────────────────────────────────────────────────────────── */
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+/* ── Global reset ───────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -13,4 +17,81 @@ html, body, #root {
 body {
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+}
+
+/* ── App shell ──────────────────────────────────────────────────────────────── */
+
+.app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-panel-group {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Editor panel (left) ────────────────────────────────────────────────────── */
+
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-bg-surface);
+  border-right: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+/* CodeMirror fills the remaining height */
+.editor-cm {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Diagram panel (right) ──────────────────────────────────────────────────── */
+
+.diagram-panel {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Resize handle ──────────────────────────────────────────────────────────── */
+
+.resize-handle {
+  width: 4px;
+  background: var(--color-border);
+  cursor: col-resize;
+  transition: background 150ms;
+  flex-shrink: 0;
+}
+
+.resize-handle:hover,
+.resize-handle[data-resize-handle-active] {
+  background: var(--color-accent);
+}
+
+/* ── Scrollbars (Webkit) ────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-canvas);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
 }

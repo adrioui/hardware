@@ -101,7 +101,7 @@
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **3.2** Implement split-pane layout in App.tsx — left panel (editor + toolbar), right panel (diagram)
+- [x] **3.2** Implement split-pane layout in App.tsx — left panel (editor + toolbar), right panel (diagram)
   - reads: `specs/phase3-editor-layout.md`, `src/App.tsx`
   - runs: `npx tsc --noEmit && npm run build`
   - validates: builds successfully
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-3.2
+3.3
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
