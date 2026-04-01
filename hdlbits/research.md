@@ -1,305 +1,284 @@
-# Research: Hardware Description vs. Software Programming — The Mental Model Shift for Verilog
-
-> Written from consolidated EE/CS educational knowledge. Web search unavailable (no API key configured).
-
----
+# Research: Lightest Web Stack for Interactive Verilog Visualizer
 
 ## Summary
 
-Verilog is not a programming language — it is a **hardware description language** that describes the physical structure and behavior of silicon circuits. The single most important shift for a software engineer learning Verilog is understanding that you are not writing instructions for a processor to execute; you are **drawing a circuit** that will exist simultaneously and permanently in space. Everything runs in parallel, time is governed by physics (not a scheduler), and the "code" you write becomes actual transistors.
+A Verilog **hierarchy visualizer** (block diagrams showing modules, ports, and instantiations) can be built as a **single HTML file under 80 KB gzipped** — no build step, no bundler — using a plain `<textarea>`, Prism.js for syntax highlighting (~7 KB gzipped), a 100-line custom Verilog module parser, Dagre for auto-layout (~60 KB gzipped), and vanilla SVG rendering with matrix-based pan/zoom. Gate-level netlist rendering (as netlistsvg does) requires ELKjs and balloons to ~800 KB+ gzipped. Mermaid.js is a poor fit for EDA diagrams regardless of its size.
 
 ---
 
 ## Findings
 
-### 1. Concurrency Model — Parallel by Default, Sequential by Exception
+### 1. Editor: Skip CodeMirror — Use Textarea + Prism.js
 
-**In software**, a CPU is a single worker that reads instructions from memory one at a time (ignoring pipelining and SIMD for now). Parallelism is an *opt-in*, hard-to-achieve property — you explicitly spawn threads, manage locks, and worry about race conditions.
+**You can absolutely avoid CodeMirror** for a Verilog visualizer input panel. The key pattern is an overlay: a transparent `<textarea>` positioned over a syntax-highlighted `<pre><code>` block that mirrors the textarea content. Prism.js re-highlights on every `input` event.
 
-**In hardware**, every module, every wire, every gate operates *simultaneously and continuously*. There is no "step 1, then step 2." All logic is evaluated at once, every instant, because it is physical matter responding to voltage.
+| Solution | Minified | Gzipped | Notes |
+|---|---|---|---|
+| Plain `<textarea>` | 0 B | 0 B | No highlighting |
+| Prism.js core + `prism-verilog.min.js` | ~10 KB | ~4 KB | Static/overlay highlighting |
+| highlight.js core + verilog grammar | ~15 KB | ~6 KB | Auto-detects, slightly heavier |
+| CodeMirror 5 | 169 KB | 56 KB | Full editor; CM5 has built-in Verilog mode |
+| CodeMirror 6 (minimal, no language) | ~200 KB | ~80 KB | Requires bundling; no official Verilog package |
+| CodeMirror 6 (+ setup + community Verilog) | ~300–350 KB | ~110–130 KB | Tree-sitter based, still no `@codemirror/lang-verilog` |
+| Monaco Editor | ~2–3 MB | ~700 KB–1 MB | Worker files separate; overkill |
 
-```verilog
-// These three assignments happen at EXACTLY the same time.
-// There is no ordering between them. They are independent circuits.
-assign a = x & y;
-assign b = y | z;
-assign c = a ^ b;   // 'a' and 'b' here are the CURRENT values, not "computed above"
-```
+**Critical note**: CodeMirror 6 has **no first-party `@codemirror/lang-verilog`** package. You'd need to wrap the CM5 mode or build a tree-sitter grammar. Prism.js ships `prism-verilog.js` out of the box, loaded from jsDelivr as a 1.2 KB standalone file. [Prism CDN](https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-verilog.min.js)
 
-Compare to Python:
-```python
-a = x & y     # step 1
-b = y | z     # step 2
-c = a ^ b     # step 3 — uses results from steps 1 and 2
-```
-
-In Python, `c` uses the newly computed `a` and `b`. In Verilog's `assign` statements, `c`'s circuit is wired to whatever `a` and `b` are *right now*, and all three circuits are solving simultaneously.
-
-**The Verilog simulation event queue** exists precisely to model this physical reality. When a value changes, it schedules "re-evaluate everything connected to this wire," propagating changes until the circuit stabilizes. This is called **settling** — real hardware does the same thing physically.
-
-**Procedural blocks (`always @`)** look sequential, but:
-- Multiple `always` blocks run **concurrently** with each other (they represent separate circuit fragments)
-- The `begin...end` inside one block is sequential only *within that description*, ultimately synthesizing to a circuit (a state machine with flip-flops) that is still parallel hardware
-
-```verilog
-always @(posedge clk) begin
-    a <= b + 1;   // These look sequential
-    c <= a & d;   // but in hardware, 'a' here is the OLD value of a
-end               // All registers capture simultaneously at the clock edge
-```
-
-This is the **non-blocking assignment (<=)** — it models the physical reality that ALL flip-flops in a clocked system latch their inputs at the SAME clock edge simultaneously.
+The textarea overlay approach is used by products like CodeFlask. Implementation is ~40 lines of vanilla JS. [Example: Peter Collingridge](https://www.petercollingridge.co.uk/tutorials/svg/interactive/pan-and-zoom/)
 
 ---
 
-### 2. The Physical Reality Behind Verilog Constructs
+### 2. SVG Pan/Zoom: 30 Lines of Vanilla JS Beats the Library
 
-Every Verilog construct maps to something you could theoretically hold in your hand.
+The `bumbu/svg-pan-zoom` library (~25 KB min / ~8 KB gzip) adds mouse + touch + keyboard pan/zoom but is overkill. The standard matrix transform approach works in **~30–50 lines**:
 
-#### Wires (`wire`)
-A `wire` is a **conductor** — in an FPGA it's a routing resource (metal traces), in an ASIC it's literally a copper or aluminum interconnect. It has:
-- **Resistance** (especially long wires — this causes *IR drop*)
-- **Capacitance** (adjacent wires form tiny capacitors — causes *crosstalk*)
-- **Propagation delay** — electrons don't travel instantaneously; a signal takes finite time to traverse a wire
+```js
+let matrix = [1,0,0,1,0,0]; // SVG transform matrix [a,b,c,d,e,f]
+const g = svg.querySelector('#diagram-group');
 
-When you write `wire a;`, the synthesis tool will physically route a conductor between the output of one gate and the input of another.
+svg.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const scale = e.deltaY < 0 ? 1.15 : 0.87;
+  // Zoom centered on mouse position
+  const pt = svg.createSVGPoint();
+  pt.x = e.clientX; pt.y = e.clientY;
+  const svgPt = pt.matrixTransform(svg.getScreenCTM().inverse());
+  matrix[4] += (1 - scale) * svgPt.x;
+  matrix[5] += (1 - scale) * svgPt.y;
+  for (let i = 0; i < 4; i++) matrix[i] *= scale;
+  g.setAttribute('transform', `matrix(${matrix.join(' ')})`);
+});
+// Similar ~15 lines for drag-to-pan with mousedown/mousemove/mouseup
+```
 
-#### Modules
-A module is a **region of silicon real estate**. When you instantiate a module, you are consuming:
-- **Area** (transistors take physical space — this is why "area" is a synthesis constraint)
-- **Power** (every switching transistor draws current from Vdd to GND)
-- **Routing resources** (the connections between modules must fit on the chip)
-
-Instantiating the same module twice means **two copies of that circuit exist physically**, not one circuit called twice. There is no "function call overhead" — calling overhead doesn't exist. But instantiating 1,000 modules means 1,000× the silicon area and power.
-
-#### `reg` — Not a Register (Necessarily)
-This is one of the most confusing naming choices in Verilog. `reg` in Verilog just means "a variable that holds a value in a procedural block." Whether it synthesizes to an actual flip-flop (a register) or a wire depends entirely on context:
-- Inside a clocked `always @(posedge clk)` → synthesizes to **D flip-flops**
-- Inside a combinational `always @(*)` → synthesizes to **combinational logic** (wires and gates), NOT a register
-
-#### Gates and LUTs
-In synthesis, your logic expressions become:
-- **ASIC**: NAND, NOR, NOT, AND, OR, XOR gates (standard cells from a library)
-- **FPGA**: Look-Up Tables (LUTs) — small memories that implement arbitrary boolean functions, plus dedicated flip-flops, carry chains, and DSP blocks
-
-An FPGA LUT is literally a tiny 16-entry RAM where the address is your 4 input bits and the output is the pre-computed truth table value. When you write `assign y = a & b & c & d;`, the synthesis tool programs a LUT with the AND truth table. The "gate" is implemented in SRAM.
+Total: **~1 KB gzipped**. Supports pinch-to-zoom if you add Touch events (~+15 lines). [Peter Collingridge tutorial](https://www.petercollingridge.co.uk/tutorials/svg/interactive/pan-and-zoom/) covers the matrix math in full detail. [Source](https://www.petercollingridge.co.uk/tutorials/svg/interactive/pan-and-zoom/)
 
 ---
 
-### 3. Why "Thinking in Hardware" Is Different
+### 3. Single HTML File with ES Modules from CDNs — Fully Viable
 
-The mental model shift has several dimensions:
+This is the **recommended architecture** for a lightweight tool:
 
-#### From "What to compute" → "What circuit to build"
-A software engineer asks: *"What algorithm should I run?"*  
-A hardware engineer asks: *"What circuit should I build that, given these inputs right now, produces the right outputs right now?"*
-
-There is no CPU interpreting your Verilog. After synthesis, the Verilog is gone. Only transistors remain.
-
-#### From "Time = instruction sequence" → "Time = clock cycles"
-In software, time is implicit — instructions execute one after another, and "time" means "how many instructions have we done."  
-In hardware, time is explicit and tied to the **clock signal**. A 200 MHz clock ticks every 5 nanoseconds. In each tick, the combinational logic between flip-flops must completely settle (propagate through all gates and routing). If it doesn't, you get **setup time violations** — the flip-flop captures garbage. This is not a software "race condition" — it is physics.
-
-#### From "Variables" → "Wires and state elements"
-In software, a variable is a named memory location. You can reassign it freely.  
-In hardware, `assign a = x & y` means "wire A is permanently connected to an AND gate whose inputs are X and Y." You cannot "reassign" a wire mid-computation. If you need a different value, you need a **multiplexer** — another physical circuit that selects between values.
-
-```verilog
-// Software brain writes this:
-assign out = a;
-assign out = b;   // ERROR: 'out' is driven by two sources — short circuit!
-
-// You need a MUX:
-assign out = sel ? b : a;  // This IS a physical multiplexer circuit
+**Pattern A — UMD via `<script src>` (works with `file://`):**
+```html
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-verilog.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@dagrejs/dagre@2/dist/dagre.js"></script>
+<script type="module" src="app.js"></script>  <!-- your code -->
 ```
 
-#### From "Iteration" → "Replication or State"
-A software `for` loop runs the same code N times sequentially.  
-In hardware, a `generate for` loop **replicates** N copies of a circuit in parallel. A behavioral `for` loop inside an `always` block **unrolls** into combinational logic (if synthesizable). To do something "N times sequentially" requires a counter register and a state machine — explicitly designed circuits.
+**Pattern B — ES Modules + Import Maps (requires HTTPS / localhost):**
+```html
+<script type="importmap">
+{"imports": {
+  "dagre": "https://esm.sh/@dagrejs/dagre@2",
+  "prismjs": "https://esm.sh/prismjs@1"
+}}
+</script>
+<script type="module">
+import dagre from 'dagre';
+import Prism from 'prismjs';
+</script>
+```
 
-#### Debugging is different
-In software: set a breakpoint, inspect variables, step through.  
-In hardware: add a **logic analyzer** or **ILA (Integrated Logic Analyzer)** tap — a second circuit that samples signals and stores them. You can only observe what you explicitly instrument. Simulation (ModelSim, Verilator) lets you see waveforms — voltage over time — not a call stack.
+- `importmap` is **Baseline 2023** — supported in all modern browsers (Chrome 89+, Firefox 108+, Safari 16.4+). [CanIUse](https://caniuse.com/import-maps)
+- `esm.sh` converts CJS/UMD packages to ES modules on-the-fly — even handles CommonJS dependencies
+- The only catch: ES modules **cannot load from `file://`** URLs due to CORS. Use a 1-line server: `python3 -m http.server` or deploy to GitHub Pages. [Julia Evans](https://jvns.ca/blog/2024/11/18/how-to-import-a-javascript-library/)
+- For truly portable offline files: stick to UMD `<script>` tags with self-contained bundles
+
+**Single file viability**: Yes. The entire tool can be one `.html` file. Inline CSS in `<style>`, inline JS in `<script>`, reference CDN libs. For offline use, download the CDN assets once and reference them locally.
 
 ---
 
-### 4. What Does a Clock REALLY Do Physically, and Why Does It Exist?
+### 4. Minimum Viable Bundle for the Full Stack
 
-#### The Physical Problem: Propagation Delay
-Gates are not instantaneous. Each gate (AND, OR, XOR, inverter) has a **propagation delay** — the time from input change to output settling. This is on the order of **tens to hundreds of picoseconds** per gate, depending on transistor size and supply voltage.
+Three tiers depending on fidelity:
 
-For complex logic (an adder, a comparator, a decoder), the signal must propagate through **multiple gate stages** in series. A 32-bit adder might have 60+ gate stages. At 10ps per gate, that's 600ps = 0.6 nanoseconds just for the logic to settle.
+#### Tier 1 — Hierarchy visualizer only (~15–20 KB gzipped, single HTML file)
 
-Additionally, **wires have delay** — electrons propagate at roughly half the speed of light in a conductor, so a 10mm wire on chip takes ~70ps just for the signal to travel its length.
+Shows module→submodule relationships, port names, instance hierarchy. **NOT gate-level.**
 
-#### The Clock as a Synchronization Barrier
-Without a clock, you'd have pure **combinational (asynchronous) logic**: inputs change → outputs eventually stabilize after some variable delay → those outputs feed the next stage → which eventually stabilizes → etc. This works for simple circuits but becomes unmanageable for complex ones because:
-1. **Glitches**: intermediate wrong values ripple through the circuit before settling
-2. **Timing depends on data values**: a ripple-carry adder takes longer to propagate when there are many carry chains
-3. **No clean way to sequence operations** across many stages
+| Component | Approach | Size (gzip) |
+|---|---|---|
+| Editor | `<textarea>` + overlay | 0 B |
+| Highlighting | Prism.js + `prism-verilog.min.js` | ~4 KB |
+| Verilog parser | Custom 100-line JS (regex-based module/port/instance extraction) | ~2 KB |
+| Layout | Custom hierarchical placement (grid/tree) | ~2 KB |
+| SVG rendering | Vanilla DOM API | ~3 KB |
+| Pan/zoom | Vanilla matrix JS | ~1 KB |
+| **Total** | | **~12–15 KB** |
 
-The **D flip-flop** is the solution. It captures its input (D) only at the rising edge of the clock, and holds that value stable until the next edge:
+#### Tier 2 — Hierarchy visualizer with auto-layout (~75–80 KB gzipped)
 
-```
-       D ─────────────────────────────[FF]──── Q
-(combinational logic feeds D)    ↑ clk captures
-                                 exactly here
-```
+Adds proper directed-graph auto-layout (Dagre, Sugiyama algorithm):
 
-The clock creates **time slots**. Each slot is one clock period (e.g., 5ns at 200MHz). In each slot:
-1. **Rising edge**: All flip-flops simultaneously capture their current D inputs → their Q outputs update
-2. **Logic evaluation phase**: The new Q values propagate through all combinational logic → D inputs of the next stage settle to new values
-3. **Setup time window**: Before the NEXT rising edge, the D inputs must be stable (setup time ≈ 100-200ps for modern FPGAs)
-4. **Next rising edge**: Repeat
+| Component | Approach | Size (gzip) |
+|---|---|---|
+| Everything from Tier 1 | — | ~12 KB |
+| Layout engine | `@dagrejs/dagre` (CDN) | ~60 KB |
+| **Total** | | **~72–80 KB** |
 
-The clock is a **global synchronization signal** that says: "Everybody commit your values NOW." It ensures that:
-- All circuits agree on what "time step N" means
-- Combinational logic has a full clock period to settle (no glitches reach the outputs)
-- Complex multi-stage computations can be pipelined — each stage holds its output for exactly one cycle before passing it on
+Dagre unpacked is 1.1 MB but the browser bundle (treeshaken) is ~200 KB minified / ~60 KB gzipped. Much smaller than ELKjs. [npm](https://registry.npmjs.org/%40dagrejs%2Fdagre)
 
-#### Why a Specific Frequency?
-The **maximum clock frequency** is determined by the **critical path** — the longest chain of combinational logic between any two flip-flops. If this path takes 4.2ns to settle, you can't run faster than ~238 MHz (5% margin → ~225 MHz), or your flip-flop will capture a value before the logic has finished computing. This is a **setup time violation** — it causes random incorrect behavior that is extremely hard to debug.
+#### Tier 3 — Gate-level netlist viewer (~800+ KB gzipped)
 
-**Synthesis tools** analyze all paths, find the critical path, and report the achievable frequency. Optimization means reducing the critical path (pipeline it — insert a flip-flop mid-path, halving the delay at the cost of one extra cycle of latency).
+Shows actual logic gates from Yosys synthesis output. Requires netlistsvg + ELKjs:
 
-#### Physical Nature of the Clock Signal
-The clock is a square wave signal distributed across the entire chip via a dedicated **clock tree** — a carefully balanced network of buffers designed to deliver the clock to every flip-flop at almost exactly the same time. **Clock skew** (the variation in arrival time across the chip) is a major design concern. If flip-flop A sees the clock edge 100ps before flip-flop B, and the logic path between them is very short, A might capture data that B hasn't finished driving yet — a **hold time violation**. Clock tree synthesis is a major step in ASIC implementation.
+| Component | Size (gzip) |
+|---|---|
+| `elk.bundled.js` | ~700–800 KB |
+| `netlistsvg.bundle.js` | ~50–100 KB |
+| Editor (CodeMirror 6 minimal) | ~80 KB |
+| **Total** | **~850 KB–1 MB** |
 
----
-
-### 5. What Does Synthesis Mean — How Does Verilog Become Gates?
-
-Synthesis is the automated process of converting **RTL (Register Transfer Level) Verilog** into a **netlist** — a description of which gates/cells to use and how to connect them.
-
-#### The Synthesis Pipeline
-
-```
-Verilog RTL
-    │
-    ▼
-[Parsing & Elaboration]
-    │  Build AST, resolve parameters, flatten hierarchy
-    ▼
-[RTL Analysis]
-    │  Identify: flip-flops (clocked always), combinational logic (assign, combo always)
-    │  Infer: state machines, counters, adders, memories
-    ▼
-[Technology-Independent Optimization]
-    │  Boolean minimization (Quine-McCluskey, BDD-based)
-    │  Remove redundant logic, constant propagation
-    ▼
-[Technology Mapping]
-    │  Map generic gates → target library cells
-    │  FPGA: map to LUTs, DSP blocks, BRAMs, flip-flops
-    │  ASIC: map to standard cells (NAND2, NOR2, DFF, MUX2, etc.)
-    ▼
-[Optimization: Area, Speed, Power trade-offs]
-    │  Critical path analysis, gate sizing, buffer insertion
-    ▼
-Netlist (EDIF, Verilog netlist, or .v with primitives)
-    │
-    ▼ (For FPGA: Place & Route)
-    │  Place cells onto physical FPGA fabric
-    │  Route connections using routing resources
-    ▼
-Bitstream (FPGA) or GDSII layout (ASIC)
-```
-
-#### What the Synthesizer Sees
-
-The synthesis tool recognizes **coding patterns** and maps them to hardware:
-
-| RTL Pattern | Inferred Hardware |
-|-------------|-------------------|
-| `assign y = a & b` | 2-input AND gate |
-| `assign y = a ? b : c` | 2:1 MUX |
-| `always @(posedge clk) q <= d` | D flip-flop |
-| `always @(posedge clk) if (rst) q <= 0; else q <= d` | D flip-flop with synchronous reset |
-| `always @(posedge clk) q <= q + 1` | N-bit binary counter (adder + register) |
-| `always @(*) case (state) ...` | Combinational decoder + MUX tree |
-| `always @(posedge clk) case (state) state <= next_state` | State register (FSM) |
-
-#### What Cannot Be Synthesized
-Not all valid Verilog simulates and synthesizes. Constructs that describe **simulation behavior** but have no hardware equivalent are **non-synthesizable**:
-- `#10;` (time delays) — simulation only; there's no "wait 10ns" gate
-- `$display`, `$monitor` (print statements) — simulation only
-- `initial` blocks — mostly simulation only (exception: FPGA memory init)
-- Dynamic memory allocation (`new`) — no hardware equivalent
-- Real number data types — no direct hardware mapping
-
-#### The Yosys Open-Source Synthesizer
-Yosys (used in the open-source toolchain with nextpnr for FPGAs) makes synthesis observable:
-```bash
-yosys -p "synth_ice40 -top mymodule; write_json netlist.json" design.v
-```
-You can see exactly what gates your Verilog became. This is enormously educational — write a simple counter and inspect what Yosys produces.
-
-#### FPGA vs. ASIC Synthesis
-
-**FPGA**: Synthesis targets a fixed fabric of LUTs, flip-flops, BRAMs, DSPs, and routing. The tools are vendor-specific (Vivado for Xilinx/AMD, Quartus for Intel/Altera). The bitstream programs the FPGA's SRAM configuration memory — the circuit is "drawn" by setting which LUTs implement which functions and which routing switches to close.
-
-**ASIC**: Synthesis targets a **standard cell library** — a set of pre-characterized gates (NAND, NOR, DFF, etc.) at a specific process node (e.g., TSMC 7nm). The output is a gate-level netlist which then undergoes **Place & Route** (APR) to physically position gates and route metal wires, producing a GDSII file sent to the fab for photolithography.
+Plus: Verilog→JSON requires either server-side Yosys or `@yowasp/yosys` WASM (~10–30 MB download — a compiled C++ synthesis suite).
 
 ---
 
-## Mental Model Checklist for Software Engineers
+### 5. How Netlistsvg Works
 
-Use this to check your intuition when writing Verilog:
+**Architecture** (5-step pipeline): [Source: nturley/netlistsvg](https://github.com/nturley/netlistsvg)
 
-| If you think... | The hardware reality is... |
-|-----------------|---------------------------|
-| "I'll compute X, then use X to compute Y" | Are they in the same clocked always block? If yes, use non-blocking (<=) so X's OLD value feeds Y. If combinational, they're simultaneous circuits. |
-| "I'll loop through this array" | You're replicating N circuits OR building a multi-cycle state machine with a counter |
-| "I'll call this function again" | Module instantiation = another physical circuit. No "calling" — it's always running |
-| "This variable holds the current value" | Is it a wire (instantaneous) or a register (holds across clock edges)? |
-| "These two things happen at the same time" | In hardware, they literally do. In simulation, the event queue models this. |
-| "This is too slow — I'll optimize the algorithm" | In hardware, optimize the CIRCUIT: pipeline, parallelize, use carry-save adders |
-| "I need a FIFO between two components" | You need an actual FIFO circuit with read/write pointers, full/empty flags — explicit design |
+1. **Input**: Yosys JSON netlist — produced by `yosys -p "read_verilog file.v; prep; write_json out.json"`. This is where Verilog is actually parsed/synthesized; netlistsvg doesn't parse Verilog itself.
+
+2. **FlatModule** (`lib/FlatModule.ts`): Parses Yosys JSON into cells (logic gates, DFFs), ports, wires, constants. Adds synthetic "split/join" nodes for bus slicing.
+
+3. **Skin** (`lib/Skin.ts`): Loads an SVG skin file (`lib/default.svg` or `lib/analog.svg`) which contains `<symbol>` definitions for each cell type (AND gate, DFF, MUX, etc.) with port positions encoded as custom attributes.
+
+4. **ELK Graph** (`lib/elkGraph.ts`): Converts `FlatModule` to ELK's JSON input format (nodes with ports, edges with connection semantics). Runs `elk.layout()` — this is the heavy async step.
+
+5. **Draw** (`lib/drawModule.ts`): Receives ELK's output (positioned nodes + routed wire paths as `sections`/`bendPoints`). Uses `onml` (a tiny S-expression XML library) to serialize the SVG. Renders `<line>` elements for wires, `<circle>` for junction dots, and instantiates skin symbols for cells.
+
+**Dependencies summary** (`package.json`):
+```
+elkjs       ^0.7.1  — layout engine (the big one, ~3.5 MB unpacked)  
+lodash      ^4.17.21 — used in drawModule for flatMap/find/minBy
+onml        ^2.1.0  — XML/SVG serializer (tiny, ~30 KB)
+ajv         ^8.6.1  — JSON schema validation of the Yosys input
+clone       ^2.1.2  — deep clone for graph manipulation
+json5       ^2.2.0  — JSON with comments for skin files
+```
+
+**Web bundle**: Uses `browserify-shim` to treat ELKjs as a global (`window.ELK`), then bundles just the netlistsvg code separately. You load both `<script>` tags manually:
+
+```html
+<script src="elk.bundled.js"></script>          <!-- ELK runs in main thread -->
+<script src="netlistsvg.bundle.js"></script>    <!-- netlistsvg uses global ELK -->
+```
+
+**Key bottleneck**: ELKjs is the Eclipse Layout Kernel compiled from Java via GWT/TeaVM. It cannot be tree-shaken. The entire ~3.5 MB unpacked bundle is required. The `elk.bundled.js` is a self-contained version that includes ELK's layered + orthogonal routing algorithms.
+
+**What netlistsvg does NOT do**: Parse Verilog. It only renders pre-synthesized Yosys JSON. For a browser-only tool you'd need `@yowasp/yosys` (WASM) or a server endpoint. The archived `YoWASP/yosys` npm package was the browser WASM path but is now read-only/archived.
 
 ---
 
-## Key Vocabulary Reference
+### 6. @aspect-build/rules_js — Not Relevant for Minimal Web Tools
 
-| Term | Hardware Meaning |
-|------|-----------------|
-| **RTL** | Register Transfer Level — describes data flow between registers through combinational logic |
-| **Netlist** | Graph of gates and their connections — the output of synthesis |
-| **Critical path** | Longest combinational delay path — limits clock frequency |
-| **Setup time** | How long before clock edge the D input must be stable |
-| **Hold time** | How long after clock edge the D input must remain stable |
-| **Glitch** | Spurious transient pulse in combinational logic before it settles |
-| **Timing closure** | Meeting all setup/hold constraints — the goal of P&R |
-| **Fan-out** | How many gate inputs one output drives — high fan-out = more capacitance = slower |
-| **Clock domain** | Set of all flip-flops clocked by the same signal |
-| **CDC** | Clock Domain Crossing — signals between different clock domains (tricky, needs synchronizers) |
-| **LUT** | Look-Up Table — FPGA primitive implementing any N-input boolean function |
-| **DFF** | D Flip-Flop — the fundamental 1-bit state storage element |
-| **Place & Route** | After synthesis: physically place gates and route metal wires |
-| **Bitstream** | FPGA programming file — configures SRAM cells that control LUTs and routing |
+`@aspect-build/rules_js` is a Bazel build rules package for JS monorepos (replaces `rules_nodejs`). It's about hermetic, reproducible multi-package builds — the opposite direction from "no build step." 
+
+For a minimal Verilog visualizer tool, the relevant philosophy is **no build tooling at all**:
+- Reference CDN scripts directly in HTML
+- Use `esm.sh` as an on-demand build system (converts CJS → ESM)
+- If you need one build step, `esbuild` is a single binary that bundles in milliseconds: `esbuild app.js --bundle --outfile=bundle.js`
+
+The "no build" approach is production-viable for tools with ≤5 dependencies.
 
 ---
 
-## Recommended Learning Path (Based on Known Resources)
+### 7. Mermaid.js for Hierarchy — Oversized and Wrong Tool
 
-1. **"Digital Design and Computer Architecture" — Harris & Harris** — The gold standard textbook. Connects transistors → gates → RTL → microprocessor. Chapter 4 (HDL) is essential.
+**Bundle sizes:**
+| Build | Minified | Gzipped |
+|---|---|---|
+| `mermaid.min.js` (v11, full) | ~1.5 MB | ~350–460 KB |
+| `@mermaid-js/tiny` (v11, flowchart + sequence only) | ~450 KB | ~100–140 KB |
 
-2. **MIT 6.004 (Computation Structures)** — Free OCW course. Builds from CMOS transistors up through ISAs. Legendary for building the right mental model.
+The `@mermaid-js/tiny` package achieves 69.7% size reduction by removing: sequence, class, state, gantt, gitGraph, mindmap, sankey, timeline, **and block-beta** diagrams. It only ships flowchart + sequence. [PR #4734](https://github.com/mermaid-js/mermaid/pull/4734)
 
-3. **Yosys + iVerilog + GTKWave** — Open-source toolchain. Write a module, simulate it (see waveforms), synthesize it (see gates), inspect the netlist. The feedback loop is invaluable.
+**Can it render EDA-style block diagrams?**
 
-4. **HDLBits** (which you're already using) — Exercises are well-sequenced. The key insight: when you solve each exercise, ask yourself "what physical circuit am I describing?"
+Only at a superficial level using `flowchart` or `block-beta` syntax:
+```
+flowchart LR
+    A[alu] -->|result| B[reg_file]
+    C[decode] -->|opcode| A
+```
 
-5. **"Computer Organization and Design" — Patterson & Hennessy** — Once you can think in hardware, this shows you how CPUs are built in exactly this paradigm.
+**Hard limitations for EDA use:**
+- ❌ No port direction annotations (input/output/inout with directionality)
+- ❌ No bus-width labels on wires (e.g., `[7:0]`)
+- ❌ No custom cell symbols (NAND gates, DFFs, MUXes as EDA shapes)
+- ❌ `block-beta` (the new block diagram type) is excluded from `@mermaid-js/tiny`
+- ❌ No clickable signal tracing / net highlighting
+- ✅ Auto-layout via Dagre (included in tiny)
+- ✅ Renders clean SVG, exportable
+- ✅ Works from CDN, no build step
+
+**Verdict**: Mermaid is attractive for documentation-style module hierarchy diagrams but cannot produce EDA-quality visualizations. Even `@mermaid-js/tiny` at ~130 KB gzipped is heavier than Tier 2's custom stack + Dagre (~72 KB) while being far less customizable.
+
+---
+
+## Recommended Stack: Tier 2 Single-File Architecture
+
+For clean EDA-style block diagrams with minimal bundle:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Total CDN payload: ~65 KB gzipped -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-verilog.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@dagrejs/dagre@2/dist/dagre.js"></script>
+</head>
+<body>
+  <textarea id="editor" placeholder="// Paste Verilog here..."></textarea>
+  <svg id="diagram"><g id="g"></g></svg>
+
+  <script type="module">
+    // 1. Textarea overlay highlighting (~20 lines)
+    // 2. Custom Verilog parser: extract module/port/instance (~80 lines)
+    // 3. Dagre graph build + layout (~50 lines)  
+    // 4. SVG render: boxes + labeled ports + wires (~80 lines)
+    // 5. Matrix pan/zoom (~40 lines)
+    // Total custom JS: ~270 lines / ~5 KB min+gzip
+  </script>
+</body>
+</html>
+```
+
+**Total payload**: ~72 KB gzipped. Zero build steps. Deployable to GitHub Pages as-is.
+
+---
+
+## Sources
+
+**Kept:**
+- [Peter Collingridge — SVG Pan and Zoom](https://www.petercollingridge.co.uk/tutorials/svg/interactive/pan-and-zoom/) — canonical vanilla matrix pan/zoom tutorial with complete code
+- [Julia Evans — Importing JS without build system](https://jvns.ca/blog/2024/11/18/how-to-import-a-javascript-library/) — definitive guide to UMD vs ESM vs CJS in no-build context
+- [Sidharth Vinod — Shrinking Mermaid](https://sidharth.dev/posts/shrinking-mermaid) — precise bundle composition data for mermaid
+- [nturley/netlistsvg — GitHub](https://github.com/nturley/netlistsvg) — source code read directly for architecture analysis
+- [Mermaid PR #4734](https://github.com/mermaid-js/mermaid/pull/4734) — confirms 69.7% size reduction and which diagram types are excluded from tiny
+- [Hacker News CM5 vs CM6](https://news.ycombinator.com/item?id=31667127) — concrete size numbers: CM5 = 56 KB gzip, CM6 larger
+- [CodeMirror discuss: minimal v6 setup](https://discuss.codemirror.net/t/minimal-setup-because-by-default-v6-is-50kb-compared-to-v5/4514) — confirms +50 KB overhead in CM6 vs CM5
+
+**Dropped:**
+- NPM trends comparisons — popularity data, not size data
+- Bundlephobia URLs — returned 502 errors; estimated from HN/forum cross-references instead
+- Comparison blog posts (myfix.it, grokipedia) — SEO-optimized, no precise numbers
+- YoWASP/yosys WASM size issue — too far into Tier 3 territory for this research focus
 
 ---
 
 ## Gaps
 
-- No live URLs due to missing web search API key — configure Perplexity or Gemini API in `~/.pi/web-search.json` for sourced research
-- FPGA-specific synthesis details (vendor tool specifics for Vivado/Quartus) not covered in depth
-- Power analysis and clock domain crossing (CDC) are mentioned but deserve dedicated research
-- Formal verification (proving circuit correctness mathematically) is a related topic not covered here
+1. **Exact ELKjs gzipped size**: The `elk.bundled.js` file size on disk wasn't retrieved directly. Estimated ~700–800 KB gzipped based on npm unpacked size (~3.5 MB) and typical GWT-compiled JS compression ratios. Confirm by running `wc -c` on the file from the netlistsvg GitHub Pages host.
 
----
+2. **Dagre exact browser bundle size**: `@dagrejs/dagre` unpacked = 1.1 MB, but the browser-targeted `dist/dagre.js` gzipped size wasn't confirmed from bundlephobia (returned 502). The ~60 KB gzip estimate is based on typical Dagre v1 measurements from forum posts. Verify with `esbuild --bundle @dagrejs/dagre --analyze`.
 
-*Research synthesized from consolidated knowledge of EE curriculum (MIT 6.004, CMU 18-240, Stanford EE271), Harris & Harris "Digital Design and Computer Architecture," Sutherland/Moorby "The Verilog PLI Handbook," and Patterson & Hennessy — March 2026*
+3. **@yowasp/yosys WASM size in browser**: The package is archived and the exact `.wasm` file download size is unclear. Reports suggest 10–30 MB. If browser-side Verilog synthesis is a hard requirement, this is the critical unknown — it may render Tier 3 impractical for web delivery without chunked loading.
+
+4. **Verilog regex parser accuracy**: A 100-line regex parser can handle simple Verilog but will struggle with parameterized modules, generate blocks, interface types (SystemVerilog), and conditional compilation. For a production tool, `tree-sitter-verilog` (WASM, ~800 KB) provides a proper CST — but adds significant bundle weight.
+
+5. **Prism.js Verilog grammar completeness**: Not verified against the full IEEE 1364/1800 spec. Complex constructs (packages, interfaces, clocking blocks) may not highlight correctly. Acceptable for a visualizer UX but worth testing against real codebases.
