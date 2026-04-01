@@ -69,7 +69,7 @@
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **2.5** Implement custom WireEdge component (`src/components/WireEdge.tsx`)
+- [x] **2.5** Implement custom WireEdge component (`src/components/WireEdge.tsx`)
   - reads: `specs/phase2-hierarchy-viz.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-2.5
+2.6
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
