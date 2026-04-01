@@ -26,6 +26,11 @@ export interface WireEdgeData extends Record<string, unknown> {
   width: string;
   /** Optional ELK-computed bend points (populated by useLayout). */
   bendPoints?: { x: number; y: number }[];
+  /**
+   * Set by DiagramCanvas when the selectedSignal in App matches this edge's
+   * signalName (editor → wire cross-panel highlighting).
+   */
+  highlighted?: boolean;
 }
 
 export type WireEdgeType = Edge<WireEdgeData, 'wire'>;
@@ -76,6 +81,7 @@ export function WireEdge({
   sourcePosition,
   targetPosition,
   data,
+  selected,
   markerEnd,
   markerStart,
   style,
@@ -90,11 +96,20 @@ export function WireEdge({
   const sigType = inferSignalType(signalName);
   const color = SIGNAL_COLORS[sigType];
 
-  const strokeWidth = hovered
-    ? 2
-    : bus
-      ? 2.5
-      : 1;
+  /** True when this wire is highlighted via either selection mechanism. */
+  const isHighlighted = selected || data?.highlighted;
+
+  const strokeWidth = isHighlighted
+    ? 3
+    : hovered
+      ? 2
+      : bus
+        ? 2.5
+        : 1;
+
+  const strokeColor = isHighlighted
+    ? 'var(--color-accent, #7aa2f7)'
+    : color;
 
   // ── Build SVG path ────────────────────────────────────────────────────────
   let pathStr: string;
@@ -140,10 +155,12 @@ export function WireEdge({
 
   // ── Edge style ────────────────────────────────────────────────────────────
   const edgeStyle: React.CSSProperties = {
-    stroke: color,
+    stroke: strokeColor,
     strokeWidth,
     fill: 'none',
-    transition: 'stroke-width 0.1s ease',
+    transition: 'stroke-width 0.1s ease, stroke 0.1s ease',
+    // Subtle glow when highlighted
+    ...(isHighlighted ? { filter: 'drop-shadow(0 0 3px rgba(122,162,247,0.6))' } : {}),
     ...style,
   };
 
@@ -193,7 +210,7 @@ export function WireEdge({
             style={{
               fontSize: 9,
               fontFamily: '"JetBrains Mono", "Fira Code", monospace',
-              fill: color,
+              fill: strokeColor,
               opacity: 0.9,
               userSelect: 'none',
               pointerEvents: 'none',

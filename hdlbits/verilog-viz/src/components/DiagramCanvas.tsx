@@ -9,7 +9,7 @@
  *  - Custom edge type: "wire"   → WireEdge
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   ReactFlow,
   MiniMap,
@@ -23,11 +23,12 @@ import {
   type OnNodesChange,
   type OnEdgesChange,
   type ColorMode,
+  type EdgeMouseHandler,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import { ModuleNode, type ModuleNodeType } from './ModuleNode';
-import { WireEdge, type WireEdgeType } from './WireEdge';
+import { WireEdge, type WireEdgeType, type WireEdgeData } from './WireEdge';
 
 // ── Node / edge type maps ─────────────────────────────────────────────────────
 
@@ -50,6 +51,16 @@ export interface DiagramCanvasProps {
   colorMode?: ColorMode;
   /** Called when the user clicks on empty canvas space (deselects). */
   onPaneClick?: () => void;
+  /**
+   * Called when the user clicks a wire edge.
+   * Passes the edge's signal name so the editor can highlight it.
+   */
+  onSignalSelect?: (signal: string | null) => void;
+  /**
+   * The currently active signal name (set from editor click).
+   * Edges whose signalName matches will be highlighted.
+   */
+  selectedSignal?: string | null;
   /** Forward ref for imperative fitView etc. */
   className?: string;
   style?: React.CSSProperties;
@@ -64,6 +75,8 @@ export function DiagramCanvas({
   onEdgesChange,
   colorMode = 'dark',
   onPaneClick,
+  onSignalSelect,
+  selectedSignal,
   className,
   style,
 }: DiagramCanvasProps) {
@@ -78,6 +91,34 @@ export function DiagramCanvas({
     [onEdgesChange],
   );
 
+  // Wire click → notify parent so Editor can highlight the signal
+  const handleEdgeClick: EdgeMouseHandler = useCallback(
+    (_event, edge) => {
+      const wireData = edge.data as WireEdgeData | undefined;
+      onSignalSelect?.(wireData?.signalName ?? null);
+    },
+    [onSignalSelect],
+  );
+
+  // Annotate edges with highlighted=true when their signal matches selectedSignal
+  const annotatedEdges = useMemo(() => {
+    if (!selectedSignal) return edges;
+    return edges.map((e) => {
+      const wireData = e.data as WireEdgeData | undefined;
+      const isMatch = wireData?.signalName === selectedSignal;
+      if (!isMatch && !wireData?.highlighted) return e;
+      return {
+        ...e,
+        data: {
+          ...wireData,
+          signalName: wireData?.signalName ?? '',
+          width: wireData?.width ?? '1',
+          highlighted: isMatch,
+        } satisfies WireEdgeData,
+      };
+    });
+  }, [edges, selectedSignal]);
+
   return (
     <div
       className={className}
@@ -90,12 +131,13 @@ export function DiagramCanvas({
     >
       <ReactFlow<ModuleNodeType, WireEdgeType>
         nodes={nodes as ModuleNodeType[]}
-        edges={edges as WireEdgeType[]}
+        edges={annotatedEdges as WireEdgeType[]}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
         onPaneClick={onPaneClick}
+        onEdgeClick={handleEdgeClick}
         colorMode={colorMode}
         fitView
         fitViewOptions={{ padding: 0.2 }}

@@ -12,6 +12,7 @@
  */
 
 import React, {
+  useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -143,6 +144,12 @@ export interface EditorHandle {
 export interface EditorProps {
   value: string;
   onChange: (value: string) => void;
+  /**
+   * Called when the user clicks a word in the editor.
+   * The diagram will highlight matching wires.
+   * Pass `null` to clear wire highlighting.
+   */
+  onSignalClick?: (name: string | null) => void;
   style?: React.CSSProperties;
   className?: string;
 }
@@ -150,14 +157,16 @@ export interface EditorProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
-  { value, onChange, style, className },
+  { value, onChange, onSignalClick, style, className },
   ref,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
-  // Track the latest onChange without recreating extensions
+  // Track the latest callbacks without recreating extensions
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
+  const onSignalClickRef = useRef(onSignalClick);
+  onSignalClickRef.current = onSignalClick;
 
   // Create the editor once on mount
   useEffect(() => {
@@ -267,11 +276,29 @@ export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
     [],
   );
 
+  // Detect the word under the mouse cursor on click and emit it as a
+  // potential signal name so the diagram can highlight matching wires.
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const view = viewRef.current;
+      if (!view) return;
+      const pos = view.posAtCoords({ x: e.clientX, y: e.clientY });
+      if (pos == null) return;
+      const word = view.state.wordAt(pos);
+      if (word) {
+        const name = view.state.sliceDoc(word.from, word.to);
+        onSignalClickRef.current?.(name);
+      }
+    },
+    [],
+  );
+
   return (
     <div
       ref={containerRef}
       style={{ height: '100%', overflow: 'hidden', ...style }}
       className={className}
+      onMouseDown={handleMouseDown}
     />
   );
 });

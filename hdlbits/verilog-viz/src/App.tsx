@@ -99,7 +99,7 @@ function App() {
   // ── State ──────────────────────────────────────────────────────────────────
   const [code, setCode] = useState(DEFAULT_CODE);
   const [theme, setTheme] = useState<Theme>(readStoredTheme);
-  const [, setSelectedSignal] = useState<string | null>(null);
+  const [selectedSignal, setSelectedSignal] = useState<string | null>(null);
 
   // Ref to CodeMirror editor for imperative API
   const editorRef = useRef<EditorHandle>(null);
@@ -167,6 +167,7 @@ function App() {
               ref={editorRef}
               value={code}
               onChange={setCode}
+              onSignalClick={handleSignalSelect}
               className="editor-cm"
             />
           </div>
@@ -182,6 +183,8 @@ function App() {
               nodes={nodes}
               edges={edges}
               onPaneClick={() => handleSignalSelect(null)}
+              onSignalSelect={handleSignalSelect}
+              selectedSignal={selectedSignal}
               style={{ height: '100%' }}
             />
           </div>
