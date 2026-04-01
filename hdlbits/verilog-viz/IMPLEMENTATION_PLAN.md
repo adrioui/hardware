@@ -24,7 +24,7 @@
   - runs: `npx vitest run tests/parser.test.ts`
   - validates: comment/string stripping tests pass
 
-- [ ] **1.4** Implement custom Verilog parser Phase B — module declaration + port extraction
+- [x] **1.4** Implement custom Verilog parser Phase B — module declaration + port extraction
   - reads: `specs/phase1-scaffold-parser.md`, `src/core/parser.ts`
   - runs: `npx vitest run tests/parser.test.ts`
   - validates: module/port extraction tests pass
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-1.4
+1.5
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
