@@ -79,7 +79,6 @@ export function WireEdge({
   markerEnd,
   markerStart,
   style,
-  selected,
 }: EdgeProps<WireEdgeType>) {
   const [hovered, setHovered] = useState(false);
 
