@@ -1,0 +1,55 @@
+/* Tokyo Night dark palette — default */
+:root {
+  --color-bg-canvas:       #1a1b26;
+  --color-bg-surface:      #24283b;
+  --color-border:          #3b4261;
+  --color-text-primary:    #c0caf5;
+  --color-text-secondary:  #a9b1d6;
+  --color-text-muted:      #565f89;
+
+  --color-accent:          #7dcfff;
+
+  /* Wire signal types */
+  --color-wire-data:       #7dcfff;
+  --color-wire-clock:      #e0af68;
+  --color-wire-reset:      #f7768e;
+  --color-wire-control:    #bb9af7;
+
+  /* Port markers */
+  --color-port-input:      #9ece6a;
+  --color-port-output:     #ff9e64;
+
+  /* Node chrome */
+  --color-node-bg:         #292e42;
+  --color-node-border:     #3b4261;
+  --color-node-selected:   #7aa2f7;
+
+  /* React Flow canvas */
+  --color-surface:         var(--color-bg-surface);
+}
+
+/* Light theme overrides */
+[data-theme="light"] {
+  --color-bg-canvas:       #d5d6db;
+  --color-bg-surface:      #e9e9ec;
+  --color-border:          #9699a3;
+  --color-text-primary:    #343b58;
+  --color-text-secondary:  #565a6e;
+  --color-text-muted:      #848cb5;
+
+  --color-accent:          #0092bf;
+
+  --color-wire-data:       #0092bf;
+  --color-wire-clock:      #8f5e15;
+  --color-wire-reset:      #c0302a;
+  --color-wire-control:    #7847bd;
+
+  --color-port-input:      #485e30;
+  --color-port-output:     #965027;
+
+  --color-node-bg:         #f0f0f3;
+  --color-node-border:     #9699a3;
+  --color-node-selected:   #3760bf;
+
+  --color-surface:         var(--color-bg-surface);
+}

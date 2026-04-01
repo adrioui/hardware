@@ -59,7 +59,7 @@
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **2.3** Create dark theme tokens (`src/theme/tokens.css`) + signal color constants (`src/theme/colors.ts`)
+- [x] **2.3** Create dark theme tokens (`src/theme/tokens.css`) + signal color constants (`src/theme/colors.ts`)
   - reads: `specs/phase2-hierarchy-viz.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors, tokens.css has Tokyo Night palette
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-2.3
+2.4
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
