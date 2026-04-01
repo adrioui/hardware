@@ -121,7 +121,7 @@
   - runs: `npx tsc --noEmit && npm run build`
   - validates: builds successfully
 
-- [ ] **3.6** Add global styles (`src/index.css`) — font import, theme application, resize handle, scrollbars
+- [x] **3.6** Add global styles (`src/index.css`) — font import, theme application, resize handle, scrollbars
   - reads: `specs/phase3-editor-layout.md`
   - runs: `npm run build`
   - validates: builds successfully
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-3.6
+4.1
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
