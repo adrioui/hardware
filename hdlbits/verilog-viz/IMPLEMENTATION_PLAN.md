@@ -96,7 +96,7 @@
 
 ### Phase 3: Split-Pane Layout + Editor Integration
 
-- [ ] **3.1** Install CodeMirror 6 deps + JetBrains Mono font, implement Editor component with Verilog syntax highlighting
+- [x] **3.1** Install CodeMirror 6 deps + JetBrains Mono font, implement Editor component with Verilog syntax highlighting
   - reads: `specs/phase3-editor-layout.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-3.1
+3.2
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
