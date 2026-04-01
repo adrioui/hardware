@@ -201,4 +201,135 @@ endmodule`;
     const design = parseVerilog(source);
     expect(design.errors.length).toBe(0);
   });
+
+  it('extracts module ports and parameters from ANSI headers', () => {
+    const source = `module adder #(
+  parameter WIDTH = 8,
+  parameter DEPTH = 4
+) (
+  input wire clk,
+  input wire [WIDTH-1:0] a,
+  output logic [WIDTH-1:0] y
+);
+endmodule`;
+
+    const design = parseVerilog(source, { filename: 'adder.v' });
+    const mod = design.modules.get('adder');
+
+    expect(mod).toBeDefined();
+    expect(mod?.parameters.map((param) => [param.name, param.value])).toEqual([
+      ['WIDTH', '8'],
+      ['DEPTH', '4'],
+    ]);
+    expect(mod?.ports.map((port) => [port.name, port.direction, port.width])).toEqual([
+      ['clk', 'input', '1'],
+      ['a', 'input', '[WIDTH-1:0]'],
+      ['y', 'output', '[WIDTH-1:0]'],
+    ]);
+    expect(mod?.parameters.every((param) => param.loc.offset >= 0)).toBe(true);
+    expect(mod?.parameters.every((param) => param.loc.filename === 'adder.v')).toBe(true);
+  });
+
+  it('extracts named and positional instantiations', () => {
+    const source = `module child(input wire a, input wire b, output wire y);
+endmodule
+
+module top(
+  input wire a,
+  input wire b,
+  output wire y0,
+  output wire y1
+);
+  child named_u0 (
+    .a(a),
+    .b(b),
+    .y(y0)
+  );
+
+  child positional_u1 (a, b, y1);
+endmodule`;
+
+    const design = parseVerilog(source);
+    const top = design.modules.get('top');
+
+    expect(top?.instances).toHaveLength(2);
+    expect(top?.instances[0].moduleName).toBe('child');
+    expect(top?.instances[0].instanceName).toBe('named_u0');
+    expect([...top!.instances[0].connections.entries()]).toEqual([
+      ['a', 'a'],
+      ['b', 'b'],
+      ['y', 'y0'],
+    ]);
+    expect([...top!.instances[1].connections.entries()]).toEqual([
+      ['__pos_0', 'a'],
+      ['__pos_1', 'b'],
+      ['__pos_2', 'y1'],
+    ]);
+  });
+
+  it('extracts parameter overrides on module instantiations', () => {
+    const source = `module child #(parameter WIDTH = 8) (
+  input wire [WIDTH-1:0] a,
+  output wire [WIDTH-1:0] y
+);
+endmodule
+
+module top(
+  input wire [7:0] in,
+  output wire [7:0] out
+);
+  child #(
+    .WIDTH(8)
+  ) u0 (
+    .a(in),
+    .y(out)
+  );
+endmodule`;
+
+    const design = parseVerilog(source, { filename: 'top.v' });
+    const instance = design.modules.get('top')?.instances[0];
+
+    expect(instance).toBeDefined();
+    expect(instance?.moduleName).toBe('child');
+    expect(instance?.instanceName).toBe('u0');
+    expect([...instance!.parameters.entries()]).toEqual([['WIDTH', '8']]);
+    expect([...instance!.connections.entries()]).toEqual([
+      ['a', 'in'],
+      ['y', 'out'],
+    ]);
+    expect(instance?.loc.line).toBeGreaterThanOrEqual(9);
+    expect(instance?.loc.filename).toBe('top.v');
+  });
+
+  it('flattens generate blocks and includes all ifdef branches', () => {
+    const source = `module leaf(input wire a, output wire y);
+endmodule
+
+module top(input wire a, output wire y0, output wire y1, output wire y2);
+  generate
+    if (1) begin
+      leaf gen_if (.a(a), .y(y0));
+    end
+    for (genvar i = 0; i < 1; i = i + 1) begin
+      leaf gen_for (.a(a), .y(y1));
+    end
+  endgenerate
+
+\`ifdef FAST
+  leaf fast_impl (.a(a), .y(y2));
+\`else
+  leaf slow_impl (.a(a), .y(y2));
+\`endif
+endmodule`;
+
+    const design = parseVerilog(source);
+    const top = design.modules.get('top');
+
+    expect(top?.instances.map((instance) => instance.instanceName)).toEqual([
+      'gen_if',
+      'gen_for',
+      'fast_impl',
+      'slow_impl',
+    ]);
+  });
 });
