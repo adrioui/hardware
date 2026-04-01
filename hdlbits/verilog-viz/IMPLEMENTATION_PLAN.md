@@ -84,7 +84,7 @@
   - runs: `npx tsc --noEmit`
   - validates: no type errors
 
-- [ ] **2.8** Implement `useLayout` hook (`src/hooks/useLayout.ts`) — converter → ELK → React Flow nodes/edges
+- [x] **2.8** Implement `useLayout` hook (`src/hooks/useLayout.ts`) — converter → ELK → React Flow nodes/edges
   - reads: `specs/phase2-hierarchy-viz.md`
   - runs: `npx tsc --noEmit`
   - validates: no type errors
@@ -238,7 +238,7 @@
 ---
 
 ## Current Task
-2.8
+2.9
 
 ## Completed
 - **1.1** — Vite + React + TS scaffold with all core deps. Build produces `dist/` (194KB gzip main chunk).
