@@ -64,7 +64,6 @@
 //
 // ──────────────────────────────────────────────────────────────────────────
 
-// I AM NOT DONE
 
 // synthesis verilog_input_version verilog_2001
 module top_module (
@@ -75,5 +74,11 @@ module top_module (
     output reg out_always_comb,
     output reg out_always_ff
 );
-
+  assign out_assign = a ^ b;
+  always @(a, b) begin
+    out_always_comb = a ^ b;
+  end
+  always @(posedge clk) begin
+    out_always_ff <= a ^ b;
+  end
 endmodule
