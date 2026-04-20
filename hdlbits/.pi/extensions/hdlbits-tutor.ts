@@ -1,7 +1,7 @@
 /**
  * HDLBits AI Tutor Extension
  *
- * Provides Socratic tutoring for HDLBits Verilog exercises.
+ * Provides direct-first tutoring for HDLBits Verilog exercises.
  *
  * Features:
  * - Load exercise descriptions and current code
@@ -9,7 +9,7 @@
  * - Request hints via the CLI
  * - Navigate to the next incomplete exercise
  * - Show per-category progress with visual bars
- * - Toggle Socratic tutor mode that injects a teaching persona
+ * - Toggle tutor mode that injects a direct-first teaching persona
  * - Persistent status line + widget showing current exercise
  */
 
@@ -152,6 +152,29 @@ export default function hdlbitsTutorExtension(pi: ExtensionAPI) {
 		}
 	}
 
+	async function loadTutorPolicy(cwd: string): Promise<string> {
+		const policyPath = join(
+			cwd,
+			".pi",
+			"skills",
+			"hdlbits-tutor",
+			"references",
+			"tutor-policy.md",
+		);
+
+		try {
+			return await readFile(policyPath, "utf8");
+		} catch {
+			return [
+				"# HDLBits Tutor Policy",
+				"",
+				"- Be direct-first.",
+				"- Answer definitions, syntax, and notation questions plainly.",
+				"- Use questions only after the concept is grounded.",
+			].join("\n");
+		}
+	}
+
 	// ── UI helpers ───────────────────────────────────────────────────────────
 
 	function updateUI(ctx: ExtensionContext) {
@@ -256,6 +279,7 @@ export default function hdlbitsTutorExtension(pi: ExtensionAPI) {
 			? exercises.find((e) => e.slug === currentExercise)
 			: null;
 		const catName = ex ? (categories.get(ex.category) ?? ex.category) : "unknown";
+		const tutorPolicy = await loadTutorPolicy(ctx.cwd);
 
 		let exerciseInfo = "No exercise is currently selected.";
 		if (ex) {
@@ -266,14 +290,7 @@ export default function hdlbitsTutorExtension(pi: ExtensionAPI) {
 You are an expert Verilog / digital-logic tutor helping a student work through HDLBits exercises.
 ${exerciseInfo}
 
-TEACHING APPROACH (Socratic method — strictly follow these rules):
-1. NEVER give complete solutions directly. Guide the student to discover the answer.
-2. Ask probing questions to reveal gaps in understanding.
-3. When the student makes a mistake, point out WHERE they went wrong and ask them to think about WHY.
-4. Offer conceptual hints before code hints.
-5. Celebrate correct reasoning, even partial progress.
-6. If the student asks to just see the answer after genuine struggle (3+ failed attempts), you may provide it, but explain every line.
-7. Keep responses concise. Use code blocks only for small illustrative snippets, not full solutions.
+${tutorPolicy}
 
 Use the available tools (hdlbits_exercise, hdlbits_run, hdlbits_hint, hdlbits_next, hdlbits_progress) proactively to give the student accurate, up-to-date context.`;
 
@@ -717,7 +734,7 @@ Use the available tools (hdlbits_exercise, hdlbits_run, hdlbits_hint, hdlbits_ne
 	// ── Command: /tutor ───────────────────────────────────────────────────────
 
 	pi.registerCommand("tutor", {
-		description: "Toggle Socratic tutor mode on/off",
+		description: "Toggle direct-first tutor mode on/off",
 		handler: async (_args, ctx) => {
 			tutorMode = !tutorMode;
 			persistState();
@@ -725,7 +742,7 @@ Use the available tools (hdlbits_exercise, hdlbits_run, hdlbits_hint, hdlbits_ne
 
 			if (tutorMode) {
 				ctx.ui.notify(
-					"🎓 Tutor mode ON — I will guide you Socratically without giving away answers.",
+					"🎓 Tutor mode ON — I will answer directly first, then scaffold as needed.",
 					"info",
 				);
 			} else {
