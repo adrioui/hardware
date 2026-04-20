@@ -11,6 +11,8 @@ Graded remotely via HDLBits' **Quartus + ModelSim** toolchain.
 
 That's it. Watch mode shows you the current exercise, waits for you to
 edit the `.v` file, auto-submits on save, and advances when you're done.
+If you pass a specific exercise name, watch mode stays on that exercise and
+keeps re-grading it on save.
 
 ## How It Works
 
@@ -33,11 +35,12 @@ exercises/
 2. Write your Verilog solution
 3. Save → auto-graded via HDLBits API (Quartus synthesis + ModelSim sim)
 4. When ✅ Success, remove `// I AM NOT DONE` to proceed
+5. Watch mode only advances when the saved file still passes after the marker is removed
 
 ## Commands
 
 ```
-hdlbits watch [name]    Watch mode (auto-submit on save)
+hdlbits watch [name]    Watch mode (auto-submit on save; named watch stays on that exercise)
 hdlbits run <name>      Submit & grade one exercise
 hdlbits hint <name>     Show hint
 hdlbits open <name>     Open in $EDITOR
