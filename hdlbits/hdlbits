@@ -58,7 +58,7 @@ cat_pretty() {
 
 ensure_session() {
     if [[ ! -f "$COOKIE_FILE" ]] || ! grep -q vlgsession "$COOKIE_FILE" 2>/dev/null; then
-        curl -sL -c "$COOKIE_FILE" "$BASE_URL/wiki/Main_Page" > /dev/null 2>&1
+        curl -skL -c "$COOKIE_FILE" "$BASE_URL/wiki/Main_Page" > /dev/null 2>&1
     fi
     if ! grep -q vlgsession "$COOKIE_FILE" 2>/dev/null; then
         die "Failed to get session"
@@ -72,13 +72,25 @@ submit_code() {
     ensure_session
 
     local response
-    response=$(curl -sL \
-        -b "$COOKIE_FILE" -c "$COOKIE_FILE" \
-        -X POST "$BASE_URL/runsim.php" \
-        --data-urlencode "vlgcode_box=$code" \
-        --data-urlencode "tc=$tc" \
-        --max-time 120 \
-        2>&1) || { STATUS="Network Error"; OUTPUT="curl failed"; return 1; }
+    local attempt=0 max_attempts=3
+    
+    while [[ $attempt -lt $max_attempts ]]; do
+        ((attempt++)) || true
+        
+        response=$(curl -skL \
+            -b "$COOKIE_FILE" -c "$COOKIE_FILE" \
+            -X POST "$BASE_URL/runsim.php" \
+            --data-urlencode "vlgcode_box=$code" \
+            --data-urlencode "tc=$tc" \
+            --max-time 600 \
+            2>&1) && break
+        
+        if [[ $attempt -lt $max_attempts ]]; then
+            sleep 2
+        fi
+    done
+    
+    [[ -z "$response" ]] && { STATUS="Network Error"; OUTPUT="Request timed out after ${max_attempts} attempts"; return 1; }
 
     STATUS=$(echo "$response" | grep -oP '(?<=<h2>Status: ).*?(?=</h2>)' | head -1 || true)
     [[ -z "$STATUS" ]] && STATUS="Unknown"
@@ -117,6 +129,12 @@ is_done() {
     # An exercise is "done" when "// I AM NOT DONE" is removed
     local file="$1"
     ! grep -q '// I AM NOT DONE' "$file" 2>/dev/null
+}
+
+file_hash() {
+    local file="$1"
+    [[ -f "$file" ]] || return 1
+    md5sum "$file" 2>/dev/null | awk '{print $1}'
 }
 
 strip_comments() {
@@ -313,8 +331,10 @@ cmd_watch() {
     # Watch mode: monitor current exercise, re-submit on save
     local slug="${1:-}"
     local file="" tc=""
+    local explicit_slug=0
 
     if [[ -n "$slug" ]]; then
+        explicit_slug=1
         file=$(slug_to_file "$slug") || die "Unknown exercise: $slug"
         tc=$(slug_to_tc "$slug")
     else
@@ -341,7 +361,11 @@ ART
     printf "${DI}  Ctrl+C to quit${RS}\n"
     echo ""
 
-    _watch_exercise "$slug" "$file" "$tc"
+    _watch_exercise "$slug" "$file" "$tc" "$explicit_slug"
+
+    if [[ $explicit_slug -eq 1 ]]; then
+        return 0
+    fi
 
     # After exercise done, move to next
     while true; do
@@ -388,46 +412,39 @@ ART
 }
 
 _watch_exercise() {
-    local slug="$1" file="$2" tc="$3"
+    local slug="$1" file="$2" tc="$3" explicit_slug="${4:-0}"
 
     local line; line=$(manifest_get "$slug")
     local title; title=$(manifest_field "$line" 4)
     local cat; cat=$(manifest_field "$line" 3)
     local pretty_cat; pretty_cat=$(cat_pretty "$cat")
+    local started_done=0
 
     printf "  ${BO}${M}%s${RS} ${DI}› %s${RS}\n" "$pretty_cat" "$title"
     printf "  ${DI}File: %s${RS}\n" "$file"
     echo ""
 
-    # Show if already done
     if is_done "$file"; then
-        printf "  ${G}Already marked done! Remove '// I AM NOT DONE' was already done.${RS}\n"
-        return 0
+        started_done=1
+        printf "  ${Y}Already marked done — watching anyway and re-grading on save.${RS}\n"
     fi
 
-    # Initial run
     printf "  ${DI}Waiting for changes to %s ...${RS}\n" "$(basename "$file")"
     printf "  ${DI}(Edit the file and save to auto-submit)${RS}\n\n"
 
     local last_hash=""
-    last_hash=$(md5sum "$file" 2>/dev/null | cut -d' ' -f1)
+    last_hash=$(file_hash "$file" || true)
 
     while true; do
         sleep 1
         local new_hash
-        new_hash=$(md5sum "$file" 2>/dev/null | cut -d' ' -f1)
+        new_hash=$(file_hash "$file" || true)
+
+        [[ -n "$new_hash" ]] || continue
 
         if [[ "$new_hash" != "$last_hash" ]]; then
             last_hash="$new_hash"
 
-            # Check if marked done
-            if is_done "$file"; then
-                echo ""
-                ok "'// I AM NOT DONE' removed — exercise marked complete!"
-                return 0
-            fi
-
-            # Submit
             printf "\n${C}›${RS} Change detected — submitting ${BO}%s${RS}...\n" "$slug"
             printf "${DI}  (Quartus + ModelSim)${RS}\n"
 
@@ -435,7 +452,19 @@ _watch_exercise() {
             submit_code "$tc" "$code"
             print_result "$slug"
 
-            if [[ "$STATUS" == "Success!" ]]; then
+            if is_done "$file"; then
+                if [[ "$STATUS" == "Success!" && $started_done -eq 0 && $explicit_slug -eq 0 ]]; then
+                    ok "'// I AM NOT DONE' removed and solution passes — exercise marked complete!"
+                    return 0
+                fi
+
+                if [[ "$STATUS" == "Success!" ]]; then
+                    printf "  ${DI}Exercise is marked done. Continuing to watch this file...${RS}\n"
+                else
+                    printf "  ${Y}Marker removed, but the current solution is not passing yet.${RS}\n"
+                    printf "  ${DI}Fix the code and save again. It will not advance until the file passes.${RS}\n"
+                fi
+            elif [[ "$STATUS" == "Success!" ]]; then
                 printf "  ${G}Remove the '// I AM NOT DONE' line to proceed.${RS}\n"
             else
                 printf "  ${DI}Fix your code and save again...${RS}\n"
