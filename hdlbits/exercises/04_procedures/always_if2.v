@@ -75,7 +75,6 @@
 //
 // ──────────────────────────────────────────────────────────────────────────
 
-// I AM NOT DONE
 
 // synthesis verilog_input_version verilog_2001
 module top_module (
@@ -88,11 +87,20 @@ module top_module (
   //
 
   always @(*) begin
-    if (cpu_overheated) shut_off_computer = 1;
+    if (cpu_overheated) begin
+      shut_off_computer = 1;
+    end else begin
+      shut_off_computer = 0;
+    end
   end
 
+
   always @(*) begin
-    if (~arrived) keep_driving = ~gas_tank_empty;
+    if (~arrived) begin
+      keep_driving = ~gas_tank_empty;
+    end else begin
+      keep_driving = 0;
+    end
   end
 
 endmodule
